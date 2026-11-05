@@ -1,0 +1,89 @@
+# Using the Clinical Fairness Toolkit {#sec-toolkit}
+
+::: {.learning-objectives}
+You should be able to choose an audit input route, recognise partial evidence, and preserve the configuration and provenance needed to interpret a CFT report.
+:::
+
+## Start from the evidence you have
+
+CFT supports several starting points. An existing model can be evaluated with suitable data and its expected preprocessing. A prediction table can be audited without loading the original model. A dataset can be used to train an illustrative baseline. A descriptive audit can examine representation and outcomes without predictions [@cftshort2026].
+
+The handbook records the inspected software snapshot in @sec-source-notes. Commands and capability details can change. A named research method in this book is not permission to substitute an unsupported implementation in a particular installed version.
+
+| Available evidence | What it can support | What is still missing |
+|---|---|---|
+| Audit attributes only | Counts, missingness, representation | Predictive performance and outcome-conditioned fairness |
+| Attributes and outcomes | Outcome distributions and cohort comparisons | Model performance |
+| Class decisions and outcomes | Confusion-based performance and decision gaps | Probability calibration and score-ranking evidence |
+| Probabilities and outcomes | Supported probability and decision evaluation | Independence from unknown model training history |
+| Survival rank scores | Supported rank discrimination | Horizon probabilities and their calibration |
+| Survival curves, outcomes, references | Supported censoring-aware horizon evaluation | Justification of sampling and censoring assumptions |
+
+A partial report can be the correct output. Calculating fewer metrics honestly is more useful than manufacturing a probability from a class label or treating a rank score as a risk.
+
+## Prepare the roles explicitly
+
+Identify the outcome, positive class or class order, predictors, audit fields, identifiers, weights, and any grouping unit. For survival, add event coding, time origin, duration units, and horizons.
+
+For an existing model, supply the preprocessing it expects. The audit does not reconstruct an unknown development history. Declare evaluation and calibration cohorts and check known identifier overlap, while recognising that absent identifiers limit what can be verified.
+
+A group-aware postprocessor needs its inputs at deployment as well as fitting. A CSV containing only one score per patient cannot support an intervention that needs alternative-input model evaluations.
+
+## A reproducible starting workflow
+
+The commands below are examples to run from the **toolkit repository**, using the `cft` environment. They are not executed when rendering this book and may need dataset preparation before the report can run.
+
+```powershell
+# Validate a prepared audit configuration before fitting or evaluation.
+python -m cft.cli validate-config audit.yaml --execution
+
+# Run the declared report.
+python -m cft.cli report --config audit.yaml
+
+# Request the optional PDF export of the same report.
+python -m cft.cli report --config audit.yaml --pdf
+
+# Open the clinical workspace.
+python -m streamlit run src/cft/demo/app.py
+```
+
+On the author's Windows workspace, the environment's interpreter is `C:/Users/Nick/anaconda3/envs/cft/python.exe`. Other installations should use their configured CFT environment.
+
+To explore the published examples, inspect the task and comparison configurations before running them. Some example files explicitly request interventions. Start with a declared baseline for your own question and request only methods whose task and input contracts you can satisfy. Do not infer the contents of a saved configuration from the word “default”.
+
+## What to read in the report
+
+First inspect the cohort and resolved configuration. Check eligibility, exclusions, group coding, outcome timing, class order, and the object being evaluated. Then read overall and subgroup performance, including support and missing metrics.
+
+For each intervention, identify whether it changes scores, decisions, intervals, curves, or the retained cohort. Compare like with like. An interval procedure should be judged by coverage and width alongside the unchanged point prediction. A decision-only policy should not be credited with changing source-score calibration.
+
+Finally read warnings and method states. They are part of the evidence, not decorative diagnostics.
+
+| State | Interpretation |
+|---|---|
+| `executed` | The requested computation completed; assumptions and clinical usefulness still require review |
+| `missing_dependency` | Required optional software was unavailable |
+| `incompatible` | The task, data, or declared input contract did not support the request |
+| `failed` | Execution encountered an error; inspect the recorded reason |
+
+An incompatible intervention must not be displayed as a successful baseline under another name. A smaller collection of executed methods should also not hide how many requested methods were unsupported.
+
+## Preserve a reviewable record
+
+Retain the configuration, input provenance, split definitions, seeds, software version, method parameters, report, machine-readable evidence, and reasons for omissions. Keep supplied context and attestations distinguishable from calculated results.
+
+This matters especially when sharing a screenshot or summary table. Without the cohort, threshold, positive class, and group definitions, an apparently simple sensitivity gap is difficult to interpret or reproduce.
+
+The retained binary research engine and historical broad benchmarks are separate from native task-aware clinical audits. Historical results should keep their original labels and cohort scope. The handbook does not relabel them as evidence from the current clinical suite.
+
+::: {.illustration-placeholder #ill-toolkit}
+**Illustration placeholder — An audit with several entry points.**
+
+Show model + data, prediction table, training dataset, and descriptive dataset flowing through a shared configuration into a report. Put available evidence and missing evidence side by side. Include a visible boundary between computed results and supplied clinical context.
+:::
+
+## Questions to discuss
+
+1. Which audit claims remain possible when a file contains decisions but no probabilities?
+2. Why does `executed` not mean clinically validated?
+3. What must accompany an exported subgroup-gap table so another reviewer can interpret it?

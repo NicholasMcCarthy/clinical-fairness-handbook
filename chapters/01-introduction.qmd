@@ -1,0 +1,64 @@
+# Introduction and background {#sec-introduction}
+
+::: {.learning-objectives}
+By the end of this chapter, you should be able to explain why overall performance is insufficient, distinguish a fairness audit from a claim about health equity, and describe how CFT supports an audit.
+:::
+
+## Why this matters
+
+Imagine a hospital using a score to offer extra support after discharge. The model has a reassuring overall performance summary. Yet one group of patients is often missed. Another is referred frequently, but finds the follow-up service difficult to reach. The model, the referral rule, and the service can each contribute to the difference.
+
+An overall average hides how performance is distributed. A large group can dominate that average, leaving a smaller group's poor results almost invisible. Even a model with similar error rates across groups may be unsuitable if its outcome is a poor measure of clinical need.
+
+Clinical fairness asks how a prediction system affects different patients and whether those differences are justified. That question includes measurement, access, clinical benefit, burden, and accountability. Statistical fairness measures help examine parts of it. They do not settle the whole question [@rajkomar2018; @selbst2019].
+
+The short CFT paper begins with a practical problem: researchers are increasingly asked to assess fairness, but assembling cohort information, task-specific metrics, subgroup comparisons, and assumptions into one report takes work. The long paper adds an important lesson: an intervention can improve the property it targets while worsening something else [@cftshort2026; @cftlong2026]. This handbook explains how to recognise those situations.
+
+## Four things that are often called fairness
+
+**Representation** asks whose records are available. A hospital dataset cannot directly describe people who could not access the hospital. Good balance among recorded patients does not establish good population coverage.
+
+**Predictive performance** asks how well a model predicts a defined outcome. This includes discrimination, calibration, and errors. Different groups may have different performance even when the same code is applied to everyone.
+
+**Decision fairness** asks how the model's output is converted into action. A threshold, a capacity limit, or a review rule can create differences that are not apparent from the score alone.
+
+**Health equity** concerns avoidable and unjust differences in opportunities, care, and health. An audit of predictions can inform that discussion. Establishing that a changed model improves health equity requires evidence about the resulting care and outcomes.
+
+These questions connect, but their answers are not interchangeable. Equal referral rates do not prove equal benefit. Equal sensitivity does not prove that everyone had an equal chance of being diagnosed in the first place.
+
+## Who benefits from reading this book?
+
+Clinicians bring knowledge of the decision, the timing of information, and the consequences of error. They can recognise when a technically convenient endpoint is clinically misleading.
+
+Researchers need to define an evaluable question and avoid overstating what their study establishes. They also need to distinguish exploratory comparisons from a procedure evaluated on genuinely new data.
+
+ML engineers translate the question into a reliable pipeline. Their responsibilities include keeping patients in the correct partitions, checking class order and units, preserving missing results, and making changes reproducible.
+
+Auditors and service leads need an evidence trail. They should be able to find the population, outcome, intended action, assumptions, group definitions, limitations, and person responsible for the next decision.
+
+Patients and public contributors help identify burdens that a model-development team might overlook. Travel, language, time away from work, fear of a procedure, and the ability to challenge a decision can matter as much as a numerical performance difference.
+
+## A companion to the toolkit
+
+CFT brings task-aware model evaluation and subgroup evidence into a shared reporting workflow. Its central role is to organise an audit of an existing model, a prediction table, or an illustrative model trained for the task. Descriptive data review can also be useful before predictions are available [@cftshort2026].
+
+The book is broader than the software. It includes clinical utility, causal questions, fairness-aware training, and service monitoring even where the toolkit does not calculate the required evidence. A topic's inclusion here is not a statement that CFT implements it.
+
+The distinction between **software checks** and **clinical validation** matters throughout. A software test can show that a routine computes a specified metric or rejects an invalid input. It cannot show that a hospital should deploy the resulting policy.
+
+## What guidance contributes
+
+TRIPOD+AI provides reporting guidance for prediction-model studies, including attention to fairness and relevant subgroups. FUTURE-AI places fairness within the wider development and use of healthcare AI [@tripod2024; @futureai2025]. These frameworks help structure questions and evidence. They do not provide one universal numerical definition of a fair clinical model.
+
+This book therefore starts with the proposed use. It does not assign an automatic pass mark to demographic parity, equal opportunity, or any other metric.
+
+::: {.illustration-placeholder #ill-lifecycle}
+**Illustration placeholder — From need to outcomes.**
+
+Show a patient population, access to care, recorded data, prediction, clinical action, and outcomes. Add a feedback arrow from care to future records. Place audit questions beside each step. Explain that this is a workflow map, not an identified causal model.
+:::
+
+## Questions to discuss
+
+1. A model has similar accuracy in two groups, but one group rarely reaches the service that uses it. What has the model audit missed?
+2. What evidence would you need before changing the claim “the gap became smaller” to “care became more equitable”?

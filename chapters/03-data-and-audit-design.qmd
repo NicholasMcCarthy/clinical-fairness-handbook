@@ -1,0 +1,78 @@
+# Data and audit design {#sec-audit-design}
+
+::: {.learning-objectives}
+You should be able to write an audit question, assign data roles, prevent common forms of leakage, and identify limits in labels, group information, and population coverage.
+:::
+
+## Define the question before opening the results
+
+An audit needs an intended population, setting, prediction time, outcome, action, and evaluation period. It also needs a named object: a score, a thresholded decision, a prediction interval, or a complete service pathway.
+
+Write down primary comparisons in advance. Include clinically important groups and intersections, the reason for each choice, and the evidence needed to interpret a difference. Additional analyses can be valuable, but should be described as exploratory if they arise after reviewing results.
+
+The term **estimand** means the quantity the analysis is trying to estimate. For example, sensitivity among eligible discharged patients with a recorded readmission within 30 days is a different estimand from sensitivity among all admissions. Both can be computed correctly while answering different questions.
+
+## The outcome is a measurement
+
+Recorded expenditure measures spending. It does not directly measure need. Recorded diagnosis depends on assessment, testing, coding, and access. Readmission depends partly on whether a patient returns to a hospital captured by the dataset.
+
+Obermeyer and colleagues provide an influential example of a cost-based proxy producing unequal allocation relative to health need [@obermeyer2019]. The general lesson is to inspect the relationship between a convenient label and the intended clinical purpose. If the target is unsuitable, changing thresholds may leave the main problem untouched.
+
+Ask how the outcome was obtained, whether the process differs by group, and whether absence of a record means absence of the event. Differential verification is especially important: if only flagged patients receive a definitive test, observed labels can depend on the very policy being evaluated.
+
+## Time belongs in the specification
+
+Predictors must be available at the proposed prediction time. A discharge summary cannot support an admission-time prediction. A recorded follow-up duration can contain information about future events or observation and is not a baseline feature simply because it is in the same table.
+
+The CFT papers explicitly exclude Heart Failure follow-up `time` from baseline predictors. They also distinguish a day-three SUPPORT landmark cohort from the full admission population [@cftlong2026]. These are teaching examples of why eligibility and timing must be stated before performance is interpreted.
+
+## Separate the roles of the data
+
+| Role | What it is used for | What must stay separate |
+|---|---|---|
+| Training | Fit preprocessing, features, model coefficients, and model structure | Evaluation outcomes |
+| Validation or calibration | Choose thresholds, tune procedures, fit postprocessors, or construct intervals under their contracts | Final evaluation data |
+| Evaluation | Estimate the performance of a frozen procedure | Further selection of the procedure being claimed as independently evaluated |
+| Censoring reference | Estimate an appropriate observation-process model for survival metrics | Undeclared or unsuitable reference populations |
+
+“Calibration data” here is a data role. It may be used for a threshold, transport map, or conformal residuals; it does not necessarily mean fitting a probability calibrator.
+
+Repeatedly inspecting a test set and choosing the most attractive intervention turns that set into development data. A new independent evaluation is then needed. Recording random seeds is useful for reproducibility, but does not undo that reuse.
+
+## Keep related records together
+
+Repeated encounters from the same patient should stay in one partition when the intended evaluation concerns new patients. Household-linked expenditure records should also be grouped. Otherwise, shared information can make performance look better than it will be on new independent units.
+
+The appropriate split depends on the deployment question. A temporal split can study a later period. A hospital-held-out split can study transfer to a new site. Neither automatically solves leakage if records cross boundaries or preprocessing uses the whole dataset.
+
+For uncertainty estimates, the resampling unit should match dependence in the data. Resampling encounter rows independently is usually inappropriate when outcomes within a patient are correlated. Survey data may additionally require design weights, strata, and primary sampling units.
+
+## Audit attributes are not ordinary columns
+
+Document what each attribute records, who assigned it, when it was collected, and how missing values arise. Sex, gender, race, ethnicity, language, disability, and deprivation are not interchangeable concepts. Administrative categories are often incomplete descriptions of a person's circumstances.
+
+Do not infer that removing a sensitive attribute from predictors removes all related information. Other fields can act as proxies. Conversely, deciding whether a variable should be used in prediction is a separate question from whether it should be retained for audit [@gichoya2022; @vyas2020].
+
+For this handbook's baseline examples, audit fields are kept separate from predictors. A group-aware postprocessor may still need the group at deployment. That requirement must be explicit.
+
+Keep an accounting of unknown and missing group values. If a method cannot handle them, report the resulting exclusion and the population to which results apply. Do not silently fold a collection of different groups into a single category to satisfy a two-group method.
+
+## Missingness and selection
+
+Missing predictors can reflect different access to testing. A missingness indicator may be predictive precisely because care differs. Imputation should be fitted on training data, and its effects should be examined across groups. A technically successful imputation does not establish that the measurement process is equitable.
+
+Missing outcomes are more serious than a blank input field. If follow-up is incomplete, a complete-case audit may describe only those who remain observed. Compare available characteristics of included and excluded patients and explain why the missing-outcome mechanism is plausible or uncertain.
+
+Privacy also affects reporting. Small cells may create disclosure risks, but suppressing them in a public report should not be presented as evidence that no disparity exists. Document the reporting rule and preserve appropriate internal review where authorised.
+
+::: {.illustration-placeholder #ill-data-split}
+**Illustration placeholder — Three partitions, one patient per lane.**
+
+Use patient icons with several encounter cards attached. Keep all cards for each patient in the same partition. Show preprocessing fitted in training and a postprocessor fitted in calibration, with a one-way path into evaluation.
+:::
+
+## Questions to discuss
+
+1. Why is preprocessing fitted on the full dataset a problem even if the model itself sees only training rows?
+2. What population does an audit describe after excluding people with unknown group values?
+3. A cost prediction is accurate in each group. What must be established before using it to allocate care by need?

@@ -1,0 +1,71 @@
+# Reporting, review, and monitoring {#sec-monitoring}
+
+::: {.learning-objectives}
+You should be able to write a bounded fairness claim, identify the evidence needed before use, and design monitoring that follows the care pathway as well as the model.
+:::
+
+## Make a claim that can be checked
+
+“The model is fair” leaves too much unspecified. A more useful statement names the population, period, outcome, policy, groups, rates, support, and uncertainty.
+
+For example:
+
+> In the stated evaluation cohort, at the prespecified referral threshold, sensitivity for the recorded 30-day outcome differed across the declared groups by the reported amount. The report gives group event counts and uncertainty. It does not establish equal treatment benefit or outcomes following referral.
+
+This is a statement a reviewer can assess. It keeps the measured property separate from the wider decision about whether the policy should be used.
+
+## Assemble the evidence in a useful order
+
+Begin with intended use and the action. Describe the cohort, target, timing, and measurement process. Explain the model and policy, including any postprocessor. Report overall performance, group estimates, support, and uncertainty. Then describe limitations, alternatives, and the decision being requested.
+
+TRIPOD+AI can structure prediction-model reporting; PROBAST+AI supports appraisal of quality, bias risk, and applicability. FUTURE-AI addresses the broader lifecycle. Early clinical evaluation and trials have additional reporting frameworks, including DECIDE-AI and CONSORT-AI [@tripod2024; @probast2025; @futureai2025; @decideai2022; @consortai2020]. A completed checklist helps organise evidence; it does not automatically approve a model or establish compliance.
+
+The handbook does not give jurisdiction-specific legal advice or claim a regulatory status for CFT. Any intended deployment needs the relevant local review, with the actual system and proposed change clearly described.
+
+## The path from retrospective results to use
+
+Internal evaluation tells us how a procedure behaved in the studied data. External or temporal evaluation examines transfer to another site or period. Prospective evaluation can reveal whether inputs arrive on time, whether staff understand outputs, and whether the intended pathway occurs.
+
+A change in patient outcomes requires evidence about use of the system. That may call for a comparative clinical study appropriate to the intervention. A retrospective threshold comparison alone does not observe clinician responses, patient uptake, treatment effects, or delays.
+
+The long CFT paper explicitly treats its comparisons as exploratory internal evidence. Untuned models, repeated use of source cohorts, incomplete uncertainty, and adaptation-specific assumptions limit what can be claimed [@cftlong2026]. These limits should travel with teaching examples drawn from the paper.
+
+## Monitor the pathway, not just the score
+
+After implementation, the population, measurement process, and service can change. A model may remain numerically stable while access to the recommended action deteriorates.
+
+| Layer | Examples to monitor | Why it matters |
+|---|---|---|
+| Inputs and eligibility | Missingness, group coding, site mix, excluded records | The audited population or measurement process may have changed |
+| Predictions | Score distributions, class frequencies, unsupported inputs | Early warning of changes, but not proof of outcome performance |
+| Outcomes | Delayed labels, calibration, errors, censoring support | Performance may drift and labels may arrive unevenly |
+| Decisions | Group selection, overrides, deferral, queue lengths | The operating policy can change independently of the model |
+| Care and burden | Attendance, waiting, procedures, patient experience | Benefit and burden occur after the prediction |
+
+Monitoring needs a denominator and a time window. Separate patients whose outcome is not yet mature from those with a known negative outcome. A sudden apparent improvement can come from shorter follow-up or missing labels.
+
+## Agree what happens when evidence changes
+
+Assign an owner for data quality, model performance, and the clinical pathway. Agree what signals require investigation, additional data, a pause, or a model or policy update. Thresholds for action should reflect clinical consequences and the precision of the estimates, rather than an arbitrary parity cutoff.
+
+An update creates a new procedure to evaluate. Recalibration can change decisions; a threshold update can alter workload; a new group definition can change who is covered. Retain versioned records and compare the changed system with a relevant baseline.
+
+Repeated monitoring also creates repeated opportunities for noisy alerts. Use a justified monitoring method and distinguish a signal requiring review from a confirmed deterioration. Record unresolved evidence rather than smoothing it away.
+
+## Participation and accountability
+
+Patients and staff should be able to understand the role of the model, raise concerns, and obtain review through an appropriate pathway. Ask whose experience is absent from the dataset and whose burden is absent from the metric.
+
+An audit team should be able to say what evidence would change its mind. A useful report supports a concrete next decision: gather more data, change the endpoint, investigate a subgroup, revise a policy, evaluate prospectively, or decline the proposed use.
+
+::: {.illustration-placeholder #ill-monitoring}
+**Illustration placeholder — Evidence returning to the team.**
+
+Show a loop from model and policy versions to decisions, access, outcomes, subgroup review, and a documented response. Put delayed labels and patient feedback on separate incoming paths. Keep the human decision to update visible.
+:::
+
+## Questions to discuss
+
+1. Which parts of a clinical pathway remain unobserved in a retrospective score audit?
+2. Why can missing or immature outcomes make monitoring look falsely reassuring?
+3. What would trigger review of a deployed policy even if its AUROC had not changed?

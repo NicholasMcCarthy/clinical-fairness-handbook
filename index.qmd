@@ -1,0 +1,40 @@
+# Welcome {.unnumbered}
+
+A prediction model can work well on average and still let some patients down. It may miss illness more often in one group, overstate risk in another, or recommend support that patients cannot actually access. Understanding these differences takes more than a single fairness score.
+
+This handbook is about asking useful questions, choosing appropriate measurements, and being clear about what the answers do and do not show. It is written for clinicians, researchers, ML engineers, auditors, service leads, and anyone asked to make sense of a clinical model's performance across patient groups.
+
+It is a companion to the **Clinical Fairness Toolkit (CFT)**. You do not need to use CFT to read it. The clinical questions come first; software helps gather the evidence.
+
+::: {.callout-note}
+## About this edition
+
+This is a working textbook dated **5 November 2026**, developed from the current short and long CFT manuscripts and their background chapter. It contains original teaching examples, referenced methods, exercises, and explicit illustration placeholders. Teaching numbers are invented and labelled as such. Manuscript observations are attributed separately. No example is a patient-care threshold or a claim of clinical validation.
+:::
+
+## Choose a route {.unnumbered}
+
+| Your starting point | A useful route |
+|---|---|
+| I use model outputs in clinical care | Introduction → Clinical applications → Utility → Fairness → Worked cases |
+| I develop or evaluate models | Audit design → Modelling approaches → Utility and fairness → Uncertainty → Task-specific interventions |
+| I review evidence or oversee a service | Introduction → Audit design → Worked cases → Reporting and monitoring → Audit worksheet |
+| I want to use CFT | Read the clinical and audit-design chapters, then the toolkit chapter and the method chapter for your task |
+| I teach this material | Use the chapter exercises, worked cases, answer notes, and illustration briefs |
+
+The equations are there to make each claim precise. Each method is also explained in words. Readers can follow the main argument without working through every derivation.
+
+## The questions we return to {.unnumbered}
+
+1. What clinical decision will the prediction inform?
+2. Who is represented, and who is missing?
+3. Does the recorded outcome measure the thing we care about?
+4. What does good performance mean for this task and this action?
+5. Which group differences matter, and how uncertain are they?
+6. What changes after an intervention, including downstream work and harm?
+
+The book separates **model scores**, **decisions**, **uncertainty**, and **patient outcomes**. Keeping these separate helps prevent a promising statistical result from being mistaken for evidence that care has improved.
+
+## How to use the teaching material {.unnumbered}
+
+Illustration boxes describe planned figures; none contains empirical results. Worked cases use deliberately small numbers so the arithmetic is easy to check. Chapter questions have suggested answers in @sec-answers. The worksheet in @sec-worksheet can be copied into an audit protocol. Source notes in @sec-source-notes explain how the manuscripts informed the book and where software claims were checked.

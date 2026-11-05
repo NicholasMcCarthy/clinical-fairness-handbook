@@ -1,0 +1,91 @@
+# Suggested answers to chapter questions {#sec-answers}
+
+These are discussion guides. A defensible answer should explain its population, assumptions, and clinical use.
+
+## Introduction and background
+
+1. Similar accuracy describes recorded patients and their predictions. It does not measure unequal access to the service or people absent from the dataset.
+2. Evidence is needed about the changed action, uptake, benefits, burdens, and patient outcomes. A narrower statistical gap alone does not establish this.
+
+## Clinical applications
+
+1. When prevalence is very low, most negative results may be correct even if many of the few cases are missed. Sensitivity uses actual cases as its denominator; NPV uses negative decisions.
+2. Specify how limited appointments are allocated, how queues work, and what happens to people who cannot be served. Evaluate the resulting complete policy.
+3. Risk concerns an outcome under the observed or modelled conditions. Benefit concerns the difference caused by an action. They need different evidence.
+
+## Data and audit design
+
+1. Whole-dataset preprocessing uses information from evaluation data when constructing the fitted procedure, which can make evaluation optimistic or unlike the intended deployment process.
+2. The audit describes the included population with supported recorded group values. The number and characteristics of excluded patients, and the limitation this creates, should be reported.
+3. Establish whether spending represents the intended need or treatment benefit. Review access and measurement pathways rather than inferring suitability from predictive accuracy.
+
+## Modelling approaches
+
+1. Dichotomisation discards magnitude and introduces an additional threshold. Different cutoffs can produce different clinical questions and fairness results.
+2. A Cox linear predictor describes a relative hazard ordering. A horizon probability also needs baseline survival, time units, and a time origin.
+3. Independent thresholds can select multiple categories or none. A mutually exclusive outcome needs one joint rule.
+
+## Utility
+
+1. A constant probability can be calibrated at the cohort level while failing to distinguish patients with different risks. Calibration does not guarantee useful discrimination.
+2. Positive and negative errors can cancel. Compare absolute error, squared error, distributions, and relevant tails.
+3. AUROC does not specify the threshold, workload, clinical consequences, or value of action. The policy requires decision-specific evaluation.
+
+## Fairness
+
+1. No. Equal sensitivity can be equally low. Report both rates and counts and assess whether detection is useful.
+2. Prevalence differs. With equal TPR and FPR, Bayes' rule still produces different PPV.
+3. There is no defined positive outcome, TPR, or FPR. A meaningful continuous-outcome criterion or a justified threshold-specific event must be stated.
+
+## Uncertainty
+
+1. PPV's denominator is the number of positive decisions, not total patients or total observed cases.
+2. It preserves within-patient dependence by resampling the independent unit. A row bootstrap treats correlated encounters as independent information.
+3. It generally leaves out training and selection variation, measurement bias, unrepresented populations, and future shift unless the design explicitly models them.
+
+## Binary post-processing
+
+1. The source scores and their ordering are unchanged; only the decisions differ. Report score and decision metrics as distinct objects.
+2. It introduces an action probability and sampling variation. Reproducibility, repeated encounters, and clinical acceptability need explicit policies.
+3. Measure group coverage, reviewer capacity, delay, subsequent decisions, and outcomes for deferred patients. Retained performance alone omits that pathway.
+
+## Multiclass post-processing
+
+1. Each row is a conditional probability distribution over the one class that will be output.
+2. Argmax changes expected action frequencies and conditional rates. A constraint fitted for $q$ need not hold for its largest-probability class.
+3. Include an unadjusted policy that samples from the original probabilities, alongside the original argmax baseline and adjusted policy.
+
+## Regression post-processing
+
+1. No. Prediction-distribution parity makes no general statement about the relationship between predictions and each group's outcomes.
+2. $\sqrt{0.25}=0.5$, so the original and fully transported predictions receive equal weight.
+3. It provides no guarantee for a particular fixed patient. The stated result is marginal over calibration and future observations within the declared group under exchangeability.
+
+## Survival post-processing
+
+1. The raw flag records whether an event was observed during available follow-up. A person censored early has unknown status at the chosen horizon.
+2. $G$ describes the censoring distribution for IPCW; $F_{\mathrm{ref}}$ describes event times for the CSD sampling approximation.
+3. It fixes other observed covariates and averages model evaluations. It does not identify all causal pathways or remove group differences in those covariates.
+
+## Other methods
+
+1. Survey weights support inference for a sampling population. Fairness weights alter an optimisation objective. Their assumptions and intended quantities differ.
+2. It does not specify acceptable false positives, missed cases, workload, or patient burden, and its numerical scale depends on the losses.
+3. A structural causal model, meaningful interventions, assumptions about pathways and background factors, and an identification argument are needed.
+
+## Worked cases
+
+1. “The EOpp gap fell from 20 percentage points to zero, while detected cases fell from 140 to 20 out of 200. Sensitivity is now 10% in both groups.”
+2. Evidence for all patients, including group-specific retention, reviewer actions and accuracy, waits, burdens, and subsequent outcomes.
+
+## Using CFT
+
+1. Supported confusion-based metrics and decision fairness comparisons remain possible. Probability calibration and ranking claims need appropriate scores.
+2. It means the computation completed. Clinical assumptions, applicability, and consequences are separate questions.
+3. Population and dates, endpoint and horizon, group definitions, threshold or policy, denominators, uncertainty, provenance, and relevant omissions.
+
+## Reporting and monitoring
+
+1. Clinician response, patient uptake, access, treatment effects, waits, and downstream outcomes may all remain unobserved.
+2. Patients with unobserved events may be incorrectly counted as non-cases, or the evaluated cohort may become selectively observed.
+3. Examples include worsened calibration, new missingness, increased false-positive burden, unequal waiting times, more deferral, or loss of outcome follow-up.

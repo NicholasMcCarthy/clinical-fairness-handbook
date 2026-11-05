@@ -1,0 +1,114 @@
+# Post-hoc methods: multiclass decisions {#sec-posthoc-multiclass}
+
+::: {.learning-objectives}
+You should be able to read a joint transition policy, distinguish outcome probabilities from policy probabilities, and identify where score-based fairness constraints rely on assumptions about the scores.
+:::
+
+## Keep one coherent decision
+
+For $K$ mutually exclusive classes, the adjusted output must still represent a joint decision. Let $p_i$ be the source class probabilities and $q_i$ an adjusted distribution in the simplex
+
+$$
+\Delta_K=\{q:q_k\ge0,\ \sum_kq_k=1\}.
+$$
+
+If $q_i$ is used to sample a decision, it is a **policy distribution**. It should not automatically be shown to patients as a calibrated diagnostic probability. Taking its argmax creates a different policy and can change a constraint fitted for randomized decisions.
+
+## Stochastic class transitions
+
+Putzel and Lee describe post-processing through group-specific class-transition matrices [@putzel2022]. Let
+
+$$
+C^{(a)}_{yj}=P(\widehat Y=j\mid Y=y,A=a)
+$$
+
+be the source model's conditional confusion matrix. Define
+
+$$
+M^{(a)}_{jk}=P(D=k\mid\widehat Y=j,A=a),\qquad
+M^{(a)}_{jk}\ge0,\quad \sum_kM^{(a)}_{jk}=1.
+$$
+
+The resulting conditional confusion matrix is
+
+$$
+\widetilde C^{(a)}=C^{(a)}M^{(a)}.
+$$ {#eq-multiclass-transition}
+
+Each row of $M$ describes how an original class is redistributed. For example, a row $(0.8,0.2,0)$ means an original class-1 decision stays class 1 with probability 0.8 and changes to class 2 with probability 0.2. These are invented policy values, not clinical recommendations.
+
+A linear program can maximise empirical expected accuracy while constraining output frequencies, class detection rates, or the full conditional confusion matrix. It needs supported class-by-group cells for the constraints being estimated. An absent true class in one group cannot supply an observed conditional rate.
+
+Equal full conditional-confusion rows are not identical to equal one-versus-rest FPRs. For class $k$, the “rest” combines several true classes; different mixtures of those classes across groups can produce different aggregated rates.
+
+**CFT scope.** The native transition implementation fits on calibration data, retains the joint randomized rule, and records unsupported cells and unseen groups. Its empirical objective does not encode arbitrary clinical misclassification costs [@cftlong2026].
+
+## Information projection: change probabilities as little as possible
+
+FairProjection seeks an adjusted distribution close to a base distribution while meeting fairness constraints [@alghamdi2022]. An illustrative weighted empirical form is
+
+$$
+\min_{q_i\in\Delta_K}\sum_i w_i\sum_k q_{ik}\log\frac{q_{ik}}{\bar p_{ik}}
+\quad\text{subject to}\quad
+\left|\sum_iw_i\sum_kq_{ik}\phi_{rk}(p_i,A_i)\right|\le\epsilon_r.
+$$ {#eq-projection}
+
+Here $w_i$ are nonnegative normalised weights, $\bar p$ is a specified smoothed source vector, and $\phi_r$ encodes a contrast between groups. The objective is a Kullback–Leibler divergence. Its direction matters; reversing the arguments is a different objective.
+
+For suitable linear constraints, the adjustment takes an exponential form with fitted signed multipliers $\lambda_r$:
+
+$$
+q_k(p,a)=\frac{\bar p_k\exp\{-\sum_r\lambda_r\phi_{rk}(p,a)\}}
+{\sum_l\bar p_l\exp\{-\sum_r\lambda_r\phi_{rl}(p,a)\}}.
+$$
+
+This preserves a joint distribution. “Close” is measured by the chosen divergence; it does not mean clinically inconsequential.
+
+**CFT scope.** The native implementation uses a SciPy optimisation adaptation. Its conditional-error variants use source probabilities as outcome proxies in moment constraints. For example,
+
+$$
+\widehat\mu^{(a)}_{yk}(q)=
+\frac{\sum_{i:A_i=a}w_i p_{iy}q_{ik}}
+{\sum_{i:A_i=a}w_i p_{iy}}.
+$$
+
+This is not automatically the observed rate $P(D=k\mid Y=y,A=a)$. If the source probabilities do not represent the required conditional outcomes, the proxy can be misleading. The implementation requires acknowledgement of the relevant calibration assumption; an acknowledgement records an assumption rather than proving it [@cftlong2026].
+
+## Optimal transport and LinearPost
+
+Multiclass DP can also be framed through optimal transport. Xian and colleagues connect fair classification with a transport problem and derive post-processing results under stated assumptions on the source predictor [@xian2023]. LinearPost extends the use of linear fairness constraints [@xian2024].
+
+For unit misclassification cost and source probabilities $p_{ik}$, a schematic program is
+
+$$
+\min_{q_i\in\Delta_K}\sum_iw_i\sum_k(1-p_{ik})q_{ik}
+\quad\text{subject to declared group-moment bounds}.
+$$ {#eq-linearpost}
+
+A corresponding adjusted-risk rule has the form
+
+$$
+D(p,a)=\arg\min_k\left\{1-p_k+\sum_r\lambda_r\phi_{rk}(p,a)\right\}.
+$$
+
+Finite-sample fitting, ties, and constraint feasibility need inspection. Guarantees based on ideal conditional probabilities do not transfer merely because a software model returns a vector summing to one.
+
+**CFT scope.** The native adapters use attribute-aware inputs and an empirical calibration program. OT-DP and LinearPost-DP share the same empirical program in the inspected implementation; their different literature labels are not independent algorithmic evidence. A general class-cost matrix and an attribute-blind auxiliary group predictor are not supplied by that adapter [@cftlong2026].
+
+## Use a matched comparator
+
+Suppose a source model predicts $(0.6,0.3,0.1)$. Argmax always chooses class 1. Sampling from the unadjusted vector chooses class 1 only 60% of the time in expectation. A randomized fairness policy compared only with argmax can therefore look different even before any fairness adjustment matters.
+
+The long CFT paper used an additional unadjusted sampling diagnostic to expose this issue. That diagnostic was added during results review and is labelled as such. The lesson is to compare matched decision semantics and distinguish planned analyses from later investigation [@cftlong2026].
+
+::: {.illustration-placeholder #ill-multiclass}
+**Illustration placeholder — Probability, policy, and sampled class.**
+
+Show a source probability vector flowing to either argmax or sampling, then show a separate constrained adjustment followed by its declared decision rule. Use a transition-matrix inset. Label disease probabilities and action probabilities separately.
+:::
+
+## Questions to discuss
+
+1. Why must each transition-matrix row sum to one?
+2. Why might argmax after a fitted randomized projection break a parity constraint?
+3. What comparator helps isolate a fairness adjustment from the effect of switching to sampling?

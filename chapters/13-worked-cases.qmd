@@ -1,0 +1,92 @@
+# Worked cases: reading the whole result {#sec-cases}
+
+::: {.learning-objectives}
+You should be able to combine utility, fairness, support, and assumptions into a defensible interpretation rather than selecting a method from one favourable metric.
+:::
+
+All numbers in this chapter are **invented teaching examples**. They are not CFT benchmark results. The accompanying manuscript lessons are qualitative and cited separately.
+
+## Case 1: the smaller gap that misses more patients
+
+A service considers a readmission alert for additional discharge support. There are 100 observed cases in each group.
+
+| Policy | Group A detected cases | Group B detected cases | Sensitivity A | Sensitivity B | EOpp gap |
+|---|---:|---:|---:|---:|---:|
+| Baseline | 80/100 | 60/100 | 80% | 60% | 20 percentage points |
+| Proposed | 10/100 | 10/100 | 10% | 10% | 0 percentage points |
+
+The gap disappears, but detected cases fall from 140 to 20 out of 200. The adjusted policy misses 180 cases. Calling this an improvement based only on EOpp would conceal the most obvious clinical consequence.
+
+The long CFT paper uses a real readmission comparison to make the same type of argument: a binary gap can become small alongside very low sensitivity. The values above are simplified for teaching and are not transcribed from that study [@cftlong2026].
+
+**A useful interpretation:** “Sensitivity is equal in the proposed policy, but low in both groups and substantially lower than baseline. The policy does not satisfy the service's intended detection purpose. False-positive burden and capacity also need review.”
+
+The next step is to revisit the development objective and operating constraints, not select another threshold using the evaluation cohort and call it independently validated.
+
+## Case 2: the missing subgroup denominator
+
+A diagnostic evaluation contains 400 patients in one group, but no observed examples of a rare diagnostic category. The report leaves class-specific sensitivity blank for that group.
+
+This is appropriate. There are no observed true cases from which to estimate detection. Entering zero would mean the model detected none of some known cases, which is a different statement. Entering 100% would be equally misleading.
+
+**A useful interpretation:** “Detection of this category cannot be estimated in this group because the evaluation cohort contains no observed cases. The overall multiclass summary does not resolve this missing evidence.”
+
+The next step might be targeted data collection or a narrower claim. Removing the group from the headline gap without explaining why makes the audit look more complete than it is.
+
+## Case 3: an accurate spending model with the wrong use
+
+A spending model predicts annual expenditure reasonably well across groups. A service proposes using it to identify people with the greatest unmet need.
+
+The target has changed. Expected spending reflects illness, access, service availability, and historical treatment. Good expenditure prediction does not establish good prediction of unmet need. Distributional repair of spending scores cannot by itself establish that the resulting allocation matches need [@obermeyer2019].
+
+Suppose a transport method reduces the difference between average predictions from 500 currency units to 50, while MAE rises from 300 to 450. This is a measurable distributional change, but neither number tells us whether the right patients receive support.
+
+**A useful interpretation:** “The adjustment changes spending predictions and increases absolute error in this example. Before evaluating allocation fairness, the service needs a justified measure of clinical need or expected benefit and evidence about the proposed support.”
+
+The long paper's diabetes and MEPS examples also show that regression transport can have different error effects in different datasets. A favourable result in one task does not settle its suitability for another [@cftlong2026].
+
+## Case 4: equal coverage, very different usefulness
+
+Two groups receive nominal 90% prediction intervals for a numeric outcome.
+
+| Group | Evaluation outcomes covered | Mean interval width | Point-prediction MAE |
+|---|---:|---:|---:|
+| A | 91/100 | 10 units | 3 units |
+| B | 90/100 | 40 units | 12 units |
+
+The achieved coverage is similar. Group B's intervals are four times wider, and its point predictions are less accurate. Neither the interval procedure nor equal coverage erases that difference.
+
+**A useful interpretation:** “Coverage is close to the nominal target in both groups in this sample, with substantial uncertainty. Wider intervals in group B may limit decisions requiring precise estimates. The point predictor remains unchanged.”
+
+Ask whether the difference arises from outcome variation, measurement, underrepresentation, or model misspecification. An interval-width gap is a signal for investigation, not an automatic instruction to narrow the less precise intervals and sacrifice coverage.
+
+## Case 5: the patient censored before the horizon
+
+Three patients receive a 90-day prognosis. One has the event at day 30. One is followed without the event to day 120. One is last seen without the event at day 40.
+
+Only the first two have known 90-day status. The third cannot be treated as a known non-case. If early loss to follow-up is more common in one group, a naive binary audit can reflect follow-up differences as well as event risk.
+
+**A useful interpretation:** “The horizon analysis requires a censoring-aware estimator and adequate support. We need to justify the censoring model and investigate group differences in follow-up before interpreting a disparity as a model-performance difference.”
+
+The long CFT paper retains this boundary in its survival methods and notes limitations of pooled censoring references. Finite-sample numerical checks do not establish the underlying independence assumptions [@cftlong2026].
+
+## Case 6: deferral moves the work
+
+Before deferral, a model is 85% accurate across 1,000 patients. After deferral, it is 95% accurate among 600 retained patients. The 400 deferred patients are not included in that accuracy calculation.
+
+If one group is deferred much more often, it may face extra appointments or delays. Without reviewer outcomes, the combined system's accuracy and clinical benefit are unknown.
+
+**A useful interpretation:** “Retained accuracy improved while automation coverage fell to 60%. We need group-specific coverage, reasons for deferral, reviewer capacity, waiting times, and downstream outcomes to assess the complete pathway.”
+
+This illustrates why CFT retained-set metrics should remain explicitly conditional [@cftlong2026].
+
+## A reusable reading sequence
+
+For each case, read the population and task first, then the unchanged baseline. Identify what the intervention changes, examine the group rates and denominators, assess utility and uncertainty, and finally state what remains unknown.
+
+The strongest next step is not always another algorithm. It may be to revise the outcome, collect missing evidence, improve service access, or decide that the proposed model use is unsupported.
+
+## Questions to discuss
+
+1. Rewrite the statement “fairness improved” for Case 1 using the actual evidence.
+2. What would be needed to assess the complete service in Case 6?

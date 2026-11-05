@@ -1,0 +1,65 @@
+# Uncertainty, small groups, and interpretation {#sec-uncertainty}
+
+::: {.learning-objectives}
+You should be able to separate lack of evidence from evidence of similarity, identify the relevant sampling unit, and interpret uncertainty around subgroup differences.
+:::
+
+## A rate is an estimate
+
+Suppose a model detects nine of ten cases in one group and 900 of 1,000 in another. Both sensitivities are 90%. The first is much less precisely estimated. Group size alone is not enough: sensitivity depends on the number of cases, specificity on non-cases, and PPV on positive decisions.
+
+As a rough illustration, the independent-binomial standard error is $\sqrt{\widehat p(1-\widehat p)/n}$. It is not a good default interval method for very small counts or extreme rates. Suitable binomial intervals, resampling, or a justified model can better represent uncertainty. Dependence and weighting can require further changes.
+
+Do not turn unsupported rates into zeros. “Not estimable: no observed cases” is an informative result. “No evidence of a difference” also does not mean the groups are equivalent. To support a claim of practically similar performance, define a meaningful margin and assess whether the evidence is precise enough for that claim.
+
+## Plan for the smallest important denominator
+
+A large dataset may contain very few events in a clinically important intersection. Planning should consider the quantities that matter: group events, non-events, selected cases, observed follow-up, or independent clusters.
+
+There is no universal minimum group size that makes all metrics reliable. Precision depends on the rate, the comparison, the sampling design, and the consequences of uncertainty. An implementation's minimum count is a software rule, not a clinical assurance threshold.
+
+If evidence is too sparse, useful responses include additional data collection, a narrower claim, or a study design that deliberately improves representation. Combining groups solely to make a result look stable may erase the people whose experience prompted the audit.
+
+## Uncertainty in a difference
+
+Report intervals for the quantity you intend to discuss. Intervals for two group rates are not an interval for their difference. Likewise, a bootstrap interval for a selected maximum-minus-minimum gap involves a data-dependent summary; describe exactly what was resampled and recalculated.
+
+Paired intervention comparisons should preserve the pairing: each resampled patient contributes both baseline and adjusted predictions. This helps distinguish a policy change from differences in the evaluated sample.
+
+Resample patients for correlated encounters, households for relevant household-linked data, and appropriate units for clustered site designs. A survey-weighted point estimate does not automatically have a valid survey-design interval. Group sample sizes and design effects can matter as much as the total number of rows.
+
+## What the interval conditions on
+
+Resampling a fixed evaluation dataset with a fixed model estimates uncertainty conditional on that fitted procedure and the sampling assumptions. It does not capture every source of model-training variation, threshold-selection variation, or future distribution shift.
+
+If the question concerns the whole learning procedure, resampling or repeated validation may need to repeat fitting and selection without leaking evaluation outcomes. That is a larger and more expensive question. State which uncertainty has actually been estimated.
+
+The long CFT paper reports variation across seeded splits but explicitly does not treat it as external-performance confidence intervals. The same patients can appear across seeds, so those runs are not independent replications [@cftlong2026].
+
+## Many comparisons invite attractive accidents
+
+An audit may examine many groups, metrics, thresholds, and interventions. With enough comparisons, some striking results occur by chance. Prespecify key questions, label exploratory results, and use an appropriate multiplicity strategy where formal inference is intended.
+
+A dashboard should still make exploratory harms visible. The goal is to avoid presenting a selected favourable comparison as if it were the only planned analysis. Clinical importance and statistical significance are different: a precisely estimated tiny gap can be unimportant, while an uncertain large gap may justify collecting better evidence.
+
+## Three uncertainties to keep separate
+
+| Uncertainty | Example | Useful response |
+|---|---|---|
+| Sampling | Few events in a subgroup | Counts, suitable intervals, more data |
+| Measurement and assumptions | Labels miss care outside the hospital | Source review, sensitivity analysis, better ascertainment |
+| Transfer | New hospital has different access and case mix | External or temporal evaluation, monitoring |
+
+An interval around a metric usually addresses only part of the first row. It cannot compensate for a poorly defined outcome or an absent population.
+
+::: {.illustration-placeholder #ill-small-groups}
+**Illustration placeholder — The same rate, different evidence.**
+
+Place 9/10 and 900/1,000 detections side by side with correctly computed binomial intervals. Label the construction and independence assumption. Add a third group with zero events and the words “sensitivity not estimable”.
+:::
+
+## Questions to discuss
+
+1. Which denominator determines the precision of PPV?
+2. Why is a patient-level bootstrap preferable to a row bootstrap for repeated encounters?
+3. What uncertainty does an interval for a fixed model on one evaluation cohort leave out?

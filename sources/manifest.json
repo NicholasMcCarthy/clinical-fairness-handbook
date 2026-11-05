@@ -1,0 +1,107 @@
+{
+  "edition_date": "2026-11-05",
+  "sources": [
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "README.md",
+      "sha256": "15329455b05edb635ee40e94e69432d60c458f87afc67a958eeec15f23a1b3ec"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "short-paper.tex",
+      "sha256": "808f9caba5f6b6d969dfb2621b4d7f31c0dba871357269f2ecdb0157569ce8c3"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "long-paper.tex",
+      "sha256": "358f5ca60b353aae664d598dd7604a6e83092a965841b8dd57e908a8f8914fcb"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "long-paper/methods.tex",
+      "sha256": "6a3ae068bfc1d57bbcb55de480bfc93651448c3e8b0429dde1b4a23febe73636"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "long-paper/discussion.tex",
+      "sha256": "f682babab919b833c129f9f216c5656e7a4931cf85418ede433f366b65494fc9"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "clinical-references.bib",
+      "sha256": "3835b2fc60e5fc3065206c53876c66dddaa47ef00e89a08f9d2a084a7bd7e29b"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/foundations.tex",
+      "sha256": "5fd4da0dbbb32ce466273acd0911bedbea74c6d27ed1d51df5c99cefc1e6a4e4"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/interventions.tex",
+      "sha256": "acf8e5588852e027f9a1f726e601a21c245841e22b00f7e030abc2edd1151cc3"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/applications.tex",
+      "sha256": "114a14c4c0806cc8e686ef6a37a7d83e0d2fe10db040ba9ad87fb6cfb5991dbc"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/practice.tex",
+      "sha256": "5288be54d4d2a93a6afb4c330c0ae31d92c7e3f5fa6ec0108cb1803fb7bd63c3"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/tasks.tex",
+      "sha256": "4ddf876b72621ca5d24027e36c95ee78443a5571bfc01019d807553d5df34bbe"
+    },
+    {
+      "repository": "cft-publication",
+      "commit": "a5b5858fb34c2b4fd46320f9717cbf68d4efc242",
+      "path": "chapter/audit-methods.tex",
+      "sha256": "427fb819f17bc49839f3624078b46f39a9639904c39eea5e18912ad26ddc396a"
+    },
+    {
+      "repository": "clinical-fairness-toolkit",
+      "commit": "bfb2d5fe96641bf54c641a781d6779c055a673a4",
+      "path": "src/cft/tasks.py",
+      "sha256": "a21f8136769628894c35a3875b40bbf697df93556f4e57031f990b533e36d115"
+    },
+    {
+      "repository": "clinical-fairness-toolkit",
+      "commit": "bfb2d5fe96641bf54c641a781d6779c055a673a4",
+      "path": "src/cft/posthoc/catalog.py",
+      "sha256": "872d904456afa258c4ab283b1e32f35cd23df4829ca2d0d2dc33dc79318dc59b"
+    },
+    {
+      "repository": "clinical-fairness-toolkit",
+      "commit": "bfb2d5fe96641bf54c641a781d6779c055a673a4",
+      "path": "docs/task-flows.md",
+      "sha256": "65c5d4f0d3714cde7ac2942867b2d65774d69197d72920317fa9de202d247a5a"
+    },
+    {
+      "repository": "clinical-fairness-toolkit",
+      "commit": "bfb2d5fe96641bf54c641a781d6779c055a673a4",
+      "path": "docs/clinical-intervention-comparisons.md",
+      "sha256": "3f8cf950189486a0415096019e2ac9e6429ee40bbec4155430d0b1d31b2e2d0e"
+    },
+    {
+      "repository": "clinical-fairness-toolkit",
+      "commit": "bfb2d5fe96641bf54c641a781d6779c055a673a4",
+      "path": "configs/tasks/binary.yaml",
+      "sha256": "f2bfecdb955f38eb5c25a74e76302ae64c55d79902ef2937a909c58336ead1dc"
+    }
+  ]
+}

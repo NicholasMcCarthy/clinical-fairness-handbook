@@ -1,0 +1,7 @@
+body { font-family: serif; line-height: 1.5; }
+h1, h2, h3 { font-family: sans-serif; line-height: 1.2; }
+table { border-collapse: collapse; font-size: .9em; width: 100%; }
+td, th { border-bottom: 1px solid #bbb; padding: .4em; vertical-align: top; }
+.illustration-placeholder { border: 2px dashed #718b96; padding: 1em; margin: 1em 0; }
+.learning-objectives { border-left: 3px solid #207a86; padding-left: 1em; }
+code { font-family: monospace; }

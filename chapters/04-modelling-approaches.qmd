@@ -1,0 +1,80 @@
+# Modelling approaches {#sec-models}
+
+::: {.learning-objectives}
+You should be able to recognise the four main prediction tasks, identify the outputs needed for evaluation, and avoid converting a clinical question into the wrong task for convenience.
+:::
+
+## Choose the task from the question
+
+The outcome determines the task. A binary model answers a two-category question. A multiclass model selects among mutually exclusive categories. Regression predicts a numeric quantity. Survival analysis addresses event timing with incomplete follow-up.
+
+These tasks can describe related clinical topics without answering the same question. Predicting a death flag from variable follow-up is not equivalent to predicting the probability of death within six months. Turning expenditure into “high” or “low” discards information and introduces a threshold that needs justification.
+
+| Task | Outcome | Useful model output | Illustrative model families |
+|---|---|---|---|
+| Binary | $Y\in\{0,1\}$ | Positive-class probability and decision | Logistic regression, gradient-boosted trees |
+| Multiclass | $Y\in\{1,\ldots,K\}$ | Full class-probability vector and one joint decision | Multinomial logistic regression, gradient-boosted trees |
+| Regression | Numeric $Y$ | Point prediction, possibly an interval | Ridge regression, boosted trees, suitable generalised linear models |
+| Survival | Observed duration and event indicator | Risk ranking and/or survival curve | Cox proportional hazards, random survival forest |
+
+These are the model families used to illustrate CFT workflows. The book does not depend on deep learning. A sophisticated model family does not remove the need to specify data roles, timing, and outcome meaning [@cftshort2026; @cftlong2026].
+
+## Binary classification
+
+Let $S=f(X)$ be a score estimating $P(Y=1\mid X)$. A threshold $t$ produces a decision
+
+$$
+D=\mathbf{1}\{S\ge t\}.
+$$
+
+The positive class must be named. It could be readmission, disease, or eligibility for support. The label “positive” does not mean beneficial. Scores and decisions require different evaluation: a threshold can change sensitivity without changing the underlying ranking.
+
+Logistic regression models log-odds as a function of predictors. Tree ensembles can capture nonlinear relationships and interactions. Either can be poorly calibrated or fail in a new population. Model family is not a substitute for evaluation.
+
+## Multiclass classification
+
+A multiclass predictor returns $p(x)=(p_1,\ldots,p_K)$, with $p_k\ge0$ and $\sum_kp_k=1$. A common decision is $\arg\max_k p_k$.
+
+Readmission recorded as none, within 30 days, or later is one example. The categories preserve information that a binary endpoint would collapse. They also introduce class-specific questions: a high overall accuracy may be driven by the common “none” class while the clinically important early-readmission class is rarely detected.
+
+One-versus-rest metrics are useful summaries. However, applying a separate threshold to every class can return several classes or no class. A mutually exclusive task needs a joint decision rule.
+
+Multiclass is also different from multilabel prediction, where several conditions can coexist. Ordinal categories, such as ordered disease stages, add a structure that ordinary multiclass methods may ignore. State these distinctions before interpreting errors.
+
+## Regression
+
+A regression model predicts a numeric quantity in defined units. Examples include expenditure, a disease-progression score, or length of stay. An error of 10 means something very different in pounds, days, or a laboratory scale.
+
+Ridge regression provides a regularised linear reference. Boosted trees allow nonlinear relationships. A Tweedie model with a suitable link can be useful for some nonnegative, zero-heavy outcomes. The distribution and intended use should guide the choice.
+
+For skewed outcomes, mean error can be dominated by a small upper tail. A logarithmic transformation changes the fitting target. Exponentiating a prediction of the mean log outcome generally does not recover the mean outcome on the original scale. Evaluate on the scale required by the clinical or service question, with any retransformation described.
+
+## Survival analysis
+
+Let $T$ be the event time and $C$ the censoring time. We observe
+
+$$
+U=\min(T,C),\qquad \delta=\mathbf{1}\{T\le C\}.
+$$
+
+If a person is last seen at day 40 without the event, their day-90 outcome is unknown. Coding them as a permanent non-event gives the wrong target.
+
+A survival curve is $S(t\mid X)=P(T>t\mid X)$. The event risk by horizon $\tau$ is $1-S(\tau\mid X)$. A curve must stay between zero and one and cannot increase with time.
+
+The Cox model expresses a hazard as $h(t\mid X)=h_0(t)\exp(X^\top\beta)$ and assumes proportional hazards in its usual form [@cox1972]. Its linear predictor gives a risk ordering; probabilities also need the baseline hazard. Random survival forests provide a tree-based alternative [@ishwaran2008]. Their outputs still need censoring-aware evaluation.
+
+The origin of time is essential. Survival from admission, from diagnosis, or from a day-three landmark concerns different populations. A landmark analysis includes people who meet the eligibility conditions at that landmark; its results should not be applied as if they described everyone at admission.
+
+Competing events, recurrent events, and time-varying predictors require additional methods. For example, death can prevent a later readmission. Treating a competing event as ordinary censoring does not generally estimate the cumulative incidence of the event of interest. This handbook's CFT examples concern a stated single-event, right-censored task, not a general solution to these extensions [@finegray1999].
+
+::: {.illustration-placeholder #ill-task-map}
+**Illustration placeholder — Four questions, four output shapes.**
+
+Show a binary probability, a multiclass probability vector, a regression estimate in units, and a survival curve with a marked horizon. Keep the same fictional clinical setting where possible. Label each output's meaning rather than ranking the tasks by complexity.
+:::
+
+## Questions to discuss
+
+1. What is lost by converting a continuous outcome to a high/low label?
+2. Why is a Cox risk score not automatically a six-month event probability?
+3. Why can three independent binary thresholds fail to define a valid three-class decision?

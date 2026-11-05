@@ -1,0 +1,119 @@
+# Post-hoc methods: regression and uncertainty intervals {#sec-posthoc-regression}
+
+::: {.learning-objectives}
+You should be able to distinguish equal prediction distributions from equal errors, interpret a transport map, and explain what group conformal coverage does and does not guarantee.
+:::
+
+## Three different goals
+
+A regression audit may ask whether a model systematically underpredicts in one group, whether absolute errors differ, or whether the prediction distributions differ. These are different properties.
+
+It may also ask whether prediction intervals contain future outcomes often enough. That concerns uncertainty coverage. An interval can improve coverage while leaving the point prediction completely unchanged.
+
+## Quantile transport
+
+Let $F_a$ be the distribution function of predicted values in group $a$, and $F_a^{-1}$ its quantile function. A person's percentile within their group is $F_a(s)$. A transport map replaces that score with the same percentile in a reference distribution.
+
+For squared Wasserstein distance in one dimension,
+
+$$
+W_2^2(F_a,F_b)=\int_0^1\{F_a^{-1}(u)-F_b^{-1}(u)\}^2\,du.
+$$
+
+Given nonnegative reference masses $\pi_b$ summing to one, the Wasserstein barycenter has quantile function
+
+$$
+Q_B(u)=\sum_b\pi_b F_b^{-1}(u).
+$$
+
+The full repair is
+
+$$
+g(s,a)=Q_B\{F_a(s)\}.
+$$ {#eq-transport}
+
+Under the continuous-distribution construction, this maps each group's predictions to the same distribution. The squared-loss interpretation and optimality results in fair regression depend on the source paper's assumptions [@chzhen2020].
+
+**In words.** If a prediction is at the 70th percentile of its group's predictions, move it to the 70th percentile of the chosen common distribution. The reference masses are part of the policy; equal group weighting and population weighting need not produce the same map.
+
+The map can be fitted from scores and group membership without outcomes. Outcomes are still needed to evaluate errors or select a useful strength of repair. Applying the map needs group membership.
+
+## Partial repair
+
+Full distributional parity may make an unacceptable change. Under the squared-Wasserstein convention used in the CFT paper, partial repair is
+
+$$
+g_\alpha(s,a)=\sqrt\alpha\,s+(1-\sqrt\alpha)g(s,a),
+\qquad 0\le\alpha\le1.
+$$ {#eq-partial-transport}
+
+Here $\alpha=0$ gives full repair and $\alpha=1$ leaves the score unchanged. At $\alpha=0.25$, the two predictions receive equal weight. Other implementations may parameterise interpolation differently, so always state the formula [@chzhen2022].
+
+The parameter controls this particular distributional change. It does not request a specified MAE difference or clinical benefit.
+
+**CFT scope.** The native implementation estimates distributions on calibration predictions, with declared weights where supported. Deterministic mid-ranks handle ties, and endpoint quantiles handle scores outside calibration support. These choices matter for zero-heavy spending and tails. They do not inherit every continuous or jitter-based guarantee in the source literature [@cftlong2026].
+
+## Clinical interpretation of distributional repair
+
+Imagine a service using predicted expenditure to plan a budget. Equal prediction distributions might conflict with genuine differences in expected spending. If the same score is used as a proxy for unmet need, equalising expenditure predictions still may not correct the proxy problem.
+
+Review signed error, MAE or RMSE, upper-tail errors, ranks, and downstream allocation. A transport map can be mathematically successful and clinically unhelpful. The long paper illustrates this with different patterns across diabetes progression and MEPS expenditure; it does not identify a universally preferred repair [@cftlong2026].
+
+::: {.illustration-placeholder #ill-transport}
+**Illustration placeholder — Moving a percentile.**
+
+Show two group prediction distributions and their common quantile reference. Trace the same within-group percentile to the common value. Add a partial-repair slider sketch. Label the target as prediction-distribution parity, not equal clinical need or equal error.
+:::
+
+## Group split-conformal intervals
+
+Conformal methods use a separate calibration sample to turn prediction errors into uncertainty sets. For a frozen point predictor $f$ and group $a$, define absolute calibration residuals
+
+$$
+r_i=|Y_i-f(X_i)|,\qquad i\in\mathcal D_{\mathrm{cal},a}.
+$$
+
+With $n_a$ calibration observations and target miscoverage $\eta$, use the order statistic
+
+$$
+k_a=\left\lceil(n_a+1)(1-\eta)\right\rceil,\qquad
+I_a(x)=[f(x)-r_{a,(k_a)},\ f(x)+r_{a,(k_a)}].
+$$ {#eq-conformal}
+
+If $k_a>n_a$, take the radius as infinite. Replacing it with the largest finite residual would silently weaken the stated finite-sample construction.
+
+Under exchangeability within the declared group, with the fitting/calibration separation required by the method, this construction gives
+
+$$
+P\{Y_{\mathrm{new}}\in I_a(X_{\mathrm{new}})\mid A_{\mathrm{new}}=a\}\ge1-\eta.
+$$
+
+This is a **group-conditional marginal** statement over the calibration sample and new observation. It is not a guarantee for each individual, each covariate value, or every realised calibration sample. It also does not promise equal interval widths [@romano2020].
+
+## A small conformal example
+
+Suppose there are 19 calibration residuals in a group and the target coverage is 90%. Then $k=\lceil20\times0.9\rceil=18$. If the 18th residual is 12 units, the interval around a prediction of 50 is $[38,62]$.
+
+With only four residuals, $k=\lceil5\times0.9\rceil=5$. There is no fifth observed residual, so the stated construction requires an unbounded interval. These invented values illustrate why nominal coverage and practical usefulness must be reported together.
+
+An interval that is wide enough to include almost every plausible outcome may be statistically conservative but unhelpful for a clinical decision. Compare coverage, width, and how those vary across groups and outcome ranges.
+
+## What changes in real datasets?
+
+The CFT implementation uses symmetric absolute-residual intervals. Romano and colleagues' equalized-coverage work includes more flexible quantile-based constructions. The simple adapter should not be described as a reproduction of every method in that paper.
+
+Repeated observations require a unit-specific contract. Using a maximum residual per cluster/group changes the target to simultaneous coverage for that group's members of a new exchangeable cluster. It is not the same as individual-row coverage.
+
+Arbitrary survey weights do not by themselves establish weighted conformal validity. A sampling or likelihood-ratio argument is required. The current CFT adapter rejects unsupported nonuniform weighting rather than quietly discarding it. Distribution shift can also break exchangeability; a 90% label is not a permanent property of the interval [@cftlong2026].
+
+::: {.illustration-placeholder #ill-conformal}
+**Illustration placeholder — Coverage and width together.**
+
+Show future outcomes as dots against intervals in two groups. Give both groups similar achieved coverage but visibly different widths. Include a sorted calibration-residual strip with the finite-sample order statistic marked. Label all values as illustrative.
+:::
+
+## Questions to discuss
+
+1. Does equalising prediction distributions establish equal MAE?
+2. What is the partial-repair weight on the original score when $\alpha=0.25$?
+3. What does a 90% group conformal statement say about one particular patient's outcome?

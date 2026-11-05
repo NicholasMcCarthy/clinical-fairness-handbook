@@ -1,0 +1,122 @@
+# Fairness: what should be compared? {#sec-fairness}
+
+::: {.learning-objectives}
+You should be able to explain demographic parity, equal opportunity, and equalized odds; interpret their denominators; and recognise why no one criterion settles clinical fairness.
+:::
+
+## Notation in plain language
+
+Let $A$ identify an audit group, $Y$ the recorded outcome, $S$ the model score, and $D$ the decision. For now, $Y$ and $D$ are binary. $D=1$ means the action is selected; it does not tell us whether that action is beneficial.
+
+The three criteria below compare **decisions**. Score calibration concerns a different object. Confusing the two can lead to a report in which a change is credited to the wrong part of the system.
+
+## Demographic parity: equal selection
+
+Demographic parity (DP) requires
+
+$$
+P(D=1\mid A=a)=P(D=1\mid A=b)
+$$
+
+for the groups being compared. A common summary is the range of selection rates:
+
+$$
+\Delta_{\mathrm{DP}}=\max_a\operatorname{SR}_a-\min_a\operatorname{SR}_a.
+$$
+
+This asks whether the same proportion of each group receives the positive decision. It can be measured without outcome labels if decisions and group membership are available.
+
+Equal access to a scarce opportunity may motivate a selection comparison. However, equal referral fractions may be inappropriate when clinical needs differ. Conversely, a measured need difference may partly reflect unequal diagnosis or access. The clinical argument has to address both possibilities.
+
+## Equal opportunity: equal detection among cases
+
+Equal opportunity (EOpp) requires equal true-positive rates:
+
+$$
+P(D=1\mid Y=1,A=a)=P(D=1\mid Y=1,A=b),
+$$
+
+with
+
+$$
+\Delta_{\mathrm{EOpp}}=\max_a\operatorname{TPR}_a-\min_a\operatorname{TPR}_a.
+$$
+
+If a positive decision offers useful support, EOpp asks whether patients who experience the recorded outcome are detected equally often. It needs labels and enough observed cases in each group [@hardt2016].
+
+The word “opportunity” can mislead in a clinical setting. The criterion conditions on a recorded outcome, not an observed right to care or an individual treatment benefit. Biased labels can undermine its interpretation.
+
+Equal sensitivity of 5% gives a zero gap while missing almost all cases. Always report the group rates, counts, and direction of change alongside the gap.
+
+## Equalized odds: equal detection and false alarms
+
+Equalized odds (EOdds) requires the decision to be independent of group conditional on the outcome:
+
+$$
+D\perp A\mid Y.
+$$
+
+For a binary outcome, this means equal TPR **and** equal false-positive rate (FPR). One explicit summary convention is
+
+$$
+\Delta_{\mathrm{EOdds}}=
+\max\left\{\max_a\mathrm{TPR}_a-\min_a\mathrm{TPR}_a,
+\max_a\mathrm{FPR}_a-\min_a\mathrm{FPR}_a\right\}.
+$$
+
+Other software may average differences or use a different pairwise comparison. State the formula rather than relying on an abbreviation. EOdds addresses both missed cases and false alarms, but still does not encode their clinical costs or the acceptability of the overall operating point [@hardt2016].
+
+## Why the criteria can disagree
+
+Consider **invented** groups with identical TPR of 90% and FPR of 10%, but prevalence of 20% in group A and 10% in group B.
+
+| Group | Cases / 1,000 | TP | FN | FP | TN | Selection rate | PPV |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| A | 200 | 180 | 20 | 80 | 720 | 26% | 69.2% |
+| B | 100 | 90 | 10 | 90 | 810 | 18% | 50.0% |
+
+EOdds holds in these counts. DP does not: selection differs by eight percentage points. PPV also differs.
+
+The relationship is visible in Bayes' rule. With prevalence $\pi_a=P(Y=1\mid A=a)$,
+
+$$
+\mathrm{PPV}_a=
+\frac{\mathrm{TPR}_a\pi_a}
+{\mathrm{TPR}_a\pi_a+\mathrm{FPR}_a(1-\pi_a)}.
+$$
+
+Equal error rates therefore need not give equal predictive values when prevalence differs. The broader incompatibility literature shows that several desirable parity and calibration properties cannot generally hold together except in special cases. This is a reason to explain choices, not a reason to stop auditing [@chouldechova2017; @kleinberg2017; @pleiss2017].
+
+## Calibration, individual fairness, and causal fairness
+
+Group calibration asks whether the same reported probability has the same outcome meaning within groups. It is especially relevant when patients and clinicians use probabilities directly.
+
+Individual fairness asks whether people who are similar in relevant respects receive similar treatment. It needs a justified definition of similarity; a distance computed from convenient columns is not automatically clinically meaningful [@dwork2012].
+
+Counterfactual fairness asks about a person's prediction under a specified causal change to a sensitive attribute. It needs a causal model and assumptions, not just a spreadsheet edit. These ideas broaden the discussion beyond group rates and are developed in @sec-other-methods.
+
+## More than one group at a time
+
+Audit groups may overlap. Sex and age comparisons can each appear acceptable while an intersection performs poorly. Examine clinically justified intersections and retain their support counts. Do not claim protection for every hidden group after testing only a few broad categories [@kearns2018].
+
+A range gap also loses direction: it does not tell the reader which group has which rate. Differences in percentage points and ratios answer different questions; ratios can become unstable near zero. Present group estimates first, then summaries.
+
+## Keep the task semantics
+
+For **multiclass** tasks, DP can concern each output class's frequency. EOpp can compare detection of each true class. Full conditional-confusion parity compares every output distribution within each true class. This is stronger than a few one-versus-rest summaries.
+
+For **regression**, compare signed error, error magnitude, relevant tail behaviour, prediction distributions, or interval coverage according to the question. Binary TPR and FPR are not generic regression errors. Defining a clinical event from a continuous outcome creates a new threshold-specific question.
+
+For **survival**, a binary comparison at horizon $\tau$ concerns $\mathbf{1}\{T\le\tau\}$. That label is unknown for patients censored before $\tau$ and requires appropriate methods. Comparing raw event flags across unequal follow-up does not answer the horizon question.
+
+::: {.illustration-placeholder #ill-fairness-denominators}
+**Illustration placeholder — Three denominators.**
+
+For DP, highlight everyone. For EOpp, highlight actual cases. For EOdds, show separate case and non-case panels. Draw selected patients within each denominator. Use direct labels as well as colour.
+:::
+
+## Questions to discuss
+
+1. Does a zero EOpp gap establish acceptable case detection?
+2. In the invented table, why does PPV differ despite equalized odds?
+3. What is missing from a claim that a regression model has “equalized odds” without a defined binary event?

@@ -1,0 +1,63 @@
+# Glossary and notation {#sec-glossary}
+
+| Term | Meaning in this handbook |
+|---|---|
+| Audit attribute | A characteristic retained for group comparisons; it need not be a model predictor |
+| Baseline | The unchanged model or policy used as a comparator |
+| Calibration | Agreement between stated probabilities and outcome frequencies in a defined population |
+| Calibration data | A held-out data role used to fit a postprocessor or uncertainty procedure; not necessarily probability recalibration |
+| Censoring | Incomplete observation of an event time; right censoring tells us the event time exceeds the last observed time |
+| Clinical utility | The benefit and burden of using a prediction for a specified action |
+| Conformal coverage | A probability statement about an uncertainty set containing a future outcome under a stated sampling contract |
+| Counterfactual | An outcome or prediction under an intervention in a specified causal model |
+| Coverage, automation | The proportion receiving an automated prediction rather than deferral |
+| Coverage, interval | The proportion or probability of outcomes contained in prediction intervals |
+| Demographic parity | Equal decision selection rates across declared groups |
+| Discrimination | Ability to rank or distinguish outcomes; different from social discrimination |
+| Distribution shift | A change between the distribution used to develop or evaluate a model and the distribution where it is used |
+| Equal opportunity | Equal true-positive rates across groups for a defined positive outcome |
+| Equalized odds | Equal conditional decision distributions across groups given the outcome; binary TPR and FPR parity |
+| Estimand | The precise quantity an analysis is intended to estimate |
+| Exchangeability | Invariance of a joint distribution under reordering; a key sampling condition for ordinary conformal arguments |
+| External validation | Evaluation in data meaningfully separate from development, such as another setting or period, with the relationship described |
+| Fairness through unawareness | Omitting sensitive inputs; this does not remove their proxies or establish fairness |
+| Intersection | A subgroup defined by a combination of attributes |
+| IPCW | Inverse-probability-of-censoring weighting, used under assumptions to account for incomplete observation |
+| Landmark | A defined prediction time at which eligibility and available information are assessed |
+| Leakage | Information entering fitting or evaluation in a way that is unavailable or inappropriate for the intended use |
+| Multicalibration | Calibration across a specified, supported family of subpopulations and score regions |
+| Net benefit | A decision-analytic comparison using stated relative values of true and false positive actions |
+| Postprocessor | A fitted or fixed transformation of the output or use of a frozen base predictor |
+| Prediction interval | A set intended to cover a future outcome; different from an interval for an estimated mean or parameter |
+| Proxy outcome | A recorded quantity used to stand for another target, such as expenditure used to represent need |
+| Retained risk | Error conditional on receiving an automated prediction under a selective policy |
+| Selection rate | Proportion receiving the positive decision |
+| Sensitive-input invariance | Lack of prediction change under a specified replacement of an input; not automatically a causal property |
+| Support | Sufficient relevant data and positive observation probabilities to define or estimate a quantity |
+| Validation, software | Checks that an implementation behaves according to its contract |
+| Validation, clinical | Evidence about performance, applicability, and potentially effects in a specified clinical use; always state the actual study |
+
+## Notation
+
+| Symbol | Meaning |
+|---|---|
+| $X$ | Predictors available at the prediction time |
+| $A$, $a$ | Audit attribute and a particular group value |
+| $Y$ | Recorded outcome |
+| $S=f(X)$ | Model score; in survival chapters, $S(t\mid X)$ instead denotes a survival function |
+| $D$ | Decision or selected class |
+| $Q$ | Automation retention indicator; $Q_i(v)$ in the survival chapter denotes a time quantile |
+| $p_k$ | Source probability of class $k$ |
+| $q_k$ | Adjusted class or policy probability, with its meaning declared |
+| $t_a$ | Decision threshold for group $a$ |
+| $T,C,U,\delta$ | Event time, censoring time, observed duration, and event indicator |
+| $\tau$ | Evaluation horizon |
+| $G$ | Censoring survival function in the IPCW formula; a subgroup set in the multicalibration discussion |
+| $F_a,F_a^{-1}$ | Group prediction CDF and quantile function in regression transport |
+| $\epsilon$ | A declared tolerance |
+| $\eta$ | Target conformal miscoverage |
+| $\alpha$ | Partial-transport parameter under the chapter's explicit convention |
+| $\pi_a$ | Group prevalence in binary calibration; reference mass where explicitly defined for transport or averaging |
+| $\lambda$ | A mixing weight, penalty, or optimisation multiplier, defined locally |
+
+Some symbols have conventional meanings in more than one literature. The local definition governs each equation. In particular, automation coverage and interval coverage should never share an unlabeled column in a report.

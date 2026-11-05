@@ -1,0 +1,121 @@
+# Post-hoc methods: survival and censoring {#sec-posthoc-survival}
+
+::: {.learning-objectives}
+You should be able to identify unsupported horizons, distinguish censoring-reference and event-time distributions, and explain the limits of survival calibration and sensitive-input averaging.
+:::
+
+## Censoring changes both fitting and evaluation
+
+At a chosen horizon, some patients have an observed event and some are known to remain event-free. Patients censored before that horizon have unknown event status. A binary postprocessor fitted to the raw event flag treats an observation-process variable as if it were the clinical horizon outcome.
+
+Using a censoring-aware metric afterwards does not repair that fitting target. The postprocessor itself needs a suitable survival construction.
+
+The output also matters. Ranking scores support some discrimination analyses, but recalibrating a horizon probability or a survival curve needs actual probabilities or curves with a stated time origin and units.
+
+## A censoring-aware loss
+
+Let $r_i(\tau)$ be predicted event risk by horizon $\tau$. Let $G$ be the censoring survival function, estimated from an appropriate reference sample. One IPCW Brier construction is
+
+$$
+\widehat R_\tau=\frac1n\sum_i\left[
+\frac{\delta_i\mathbf{1}\{U_i\le\tau\}}{\widehat G(U_i^-)}
+\{1-r_i(\tau)\}^2
++\frac{\mathbf{1}\{U_i>\tau\}}{\widehat G(\tau)}r_i(\tau)^2
+\right].
+$$ {#eq-ipcw}
+
+The first term scores observed events by the horizon; the second scores patients observed beyond it. Patients censored earlier contribute neither observed binary label. Weighting compensates for observation under the required assumptions [@graf1999].
+
+The displayed left limit states a tie convention; implementations should use a consistent convention with their estimator. Positive censoring support is necessary but not sufficient. A pooled $G$ requires an appropriate independence assumption. If observation depends on group or covariates in a relevant way, a conditional or stratified censoring model may be needed.
+
+Large weights near the end of follow-up can make estimates unstable. Report support by group and horizon, and do not make an unsupported late horizon appear reliable by extrapolating without an explicit model.
+
+::: {.illustration-placeholder #ill-censoring}
+**Illustration placeholder — Known and unknown at day 90.**
+
+Draw three patient timelines: event at day 40, event-free observation to day 120, and censoring at day 40. Mark the 90-day horizon. Label the third outcome “unknown at day 90”, never “no event”.
+:::
+
+## Pseudo-observation multicalibration
+
+Pseudo-observations provide a way to construct patient-level targets from a survival estimator. Within calibration stratum $b$ of size $n_b$, an event-risk pseudo-observation at horizon $\tau$ is
+
+$$
+\widetilde Y_i(\tau)=n_b\widehat F_b^{\mathrm{KM}}(\tau)
+-(n_b-1)\widehat F_{b,-i}^{\mathrm{KM}}(\tau),
+$$ {#eq-pseudo-observation}
+
+where $\widehat F^{\mathrm{KM}}=1-\widehat S^{\mathrm{KM}}$ and the second estimate omits patient $i$. This is a jackknife quantity, not an observed individual outcome. It can lie outside $[0,1]$ [@andersen2010].
+
+For a finite family of eligible group/bin indicators $h$, a calibration target is
+
+$$
+\max_{h\in\mathcal H}
+\left|\frac{\sum_i h_i\{\widetilde Y_i(\tau)-r_i(\tau)\}}
+{\sum_i h_i}\right|\le\epsilon.
+$$
+
+An illustrative update adds the selected cell's residual mean $\Delta_h$ to its current risks:
+
+$$
+r_i^{(m+1)}(\tau)=\operatorname{clip}_{[0,1]}
+\{r_i^{(m)}(\tau)+h_i\Delta_h^{(m)}\}.
+$$
+
+Ye and Li develop a broader multicalibration approach for censored survival [@ye2025]. The CFT implementation is a restricted finite-auditor adaptation using primary groups and bins of original scores. A sufficient assumption for its plain stratum-specific KM construction is independence of censoring from event time and calibration covariates within the stratum, together with horizon support. Merely supplying a stratum label does not establish this.
+
+Separate horizon updates can produce incoherent curves. CFT repairs the time ordering and checks residual errors after repair, since repairing monotonicity can change calibration. Meeting a finite calibration-cell target is not universal protection for arbitrary intersections or future populations [@cftlong2026].
+
+## Conformalized survival distributions
+
+Conformalized survival distributions (CSD) adjust predicted event-time quantiles using held-out survival outcomes [@qi2024]. Let $Q_i(v)$ be the source event-time quantile at CDF level $v$.
+
+In the CFT paper's KM-sampling adaptation, observed events retain their times. For a censored patient, simulated times are drawn from an estimated event-time distribution conditional on survival past the censoring time:
+
+$$
+T_i^{(m)}\sim\widehat F_{\mathrm{ref}}(\cdot\mid T>U_i),\qquad
+R_{im}(v)=Q_i(v)-T_i^{(m)}.
+$$
+
+This $F_{\mathrm{ref}}$ concerns **event times**. It is different from the **censoring** distribution $G$ used in @eq-ipcw. Simulated values are assumptions-based draws, not recovered patient outcomes.
+
+For $n$ calibration patients, the documented correction is
+
+$$
+b_v=\min\left\{\frac{\lceil(n+1)(1-v)\rceil}{n},1\right\},\quad
+c_v=\widehat Q_{b_v}\{R_{im}(v)\},\quad
+Q_i^*(v)=Q_i(v)-c_v.
+$$ {#eq-csd}
+
+Simulation draws do not increase the independent patient count in the correction. The adjusted quantiles require positivity and ordering before conversion into curves. Unsupported tail quantiles need an explicit extrapolation assumption or an incompatible result.
+
+CSD targets distribution calibration, not a protected-group parity constraint. Censoring assumptions, reference fit, simulation, and quantile repair affect the native adaptation. The source paper's theoretical results should not be restated as an unconditional guarantee for this finite implementation or for every horizon-specific metric [@cftlong2026].
+
+## Sensitive-input curve averaging
+
+EquiSurv motivates averaging source-model curves over alternative sensitive-input values [@zhao2023]. For prespecified weights $\pi_b$,
+
+$$
+\overline S(t\mid x)=\sum_b\pi_b S_{\mathrm{src}}(t\mid x,A=b),
+\qquad \pi_b\ge0,\quad\sum_b\pi_b=1.
+$$ {#eq-curve-average}
+
+A convex mixture preserves valid survival-curve shape. At the fixed other inputs $x$, the averaged result no longer depends on the patient's supplied observed value of $A$.
+
+However, other inputs can differ between groups and can carry consequences of structural conditions. Input-replacement invariance therefore does not imply equal group outcomes, equal errors, or a causally identified counterfactual effect.
+
+One observed curve per person is insufficient. The source model must support the alternative-input evaluations, and those evaluations must be meaningful. If $A$ is already excluded and has no effect on the source prediction, averaging its replacements produces no substantive intervention.
+
+**CFT scope.** An explicit external curve bundle supplies the alternative-input curves, row identities, time definitions, and source provenance. Compare the average against the **same** source model under observed inputs. An unrelated baseline would mix the effect of averaging with the effect of changing models [@cftlong2026].
+
+## What an acceptable comparison retains
+
+Keep the original curve, adjusted curve, fitting horizon, evaluation horizons, group support, and censoring assumptions. Assess calibration, discrimination, and clinically relevant decisions after the complete adjustment. If curves cross or require tail repair, report that behaviour.
+
+A calibration gain on development data can disappear on evaluation data. The long CFT paper includes examples where native survival adjustments worsen evaluation measures. Those results are evidence about the implemented settings and cohorts, not a general verdict on every version of the underlying research method [@cftlong2026].
+
+## Questions to discuss
+
+1. Why is an event flag an unsuitable substitute for a 90-day outcome?
+2. Which distribution describes censoring in IPCW, and which describes event times in CSD sampling?
+3. Why does averaging alternative-input curves not prove counterfactual fairness?

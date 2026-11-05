@@ -1,0 +1,80 @@
+# Clinical applications: start with the action {#sec-applications}
+
+::: {.learning-objectives}
+You should be able to distinguish rule-in and rule-out uses, connect errors to consequences, and explain why high risk is not necessarily high treatment benefit.
+:::
+
+## One score, several decisions
+
+A readmission score might be used to offer a telephone call, schedule a home visit, postpone discharge, or describe the workload expected next month. These are different uses. Their costs, benefits, and acceptable errors differ.
+
+Write the proposed use as a sentence before choosing a metric:
+
+> At discharge, this service will use information available by that time to identify eligible patients for an additional follow-up call within the next week.
+
+This sentence identifies the timing, population, action, and service. It still needs an outcome and a justification that the call is useful. It is nevertheless much more informative than “predict readmission fairly”.
+
+## Rule-out: avoiding missed cases
+
+A rule-out policy aims to identify people unlikely to have the condition or event of concern, so that further investigation can be reduced or deferred. Missing a true case is often the central concern. **Sensitivity** measures the proportion of actual cases detected. **Negative predictive value (NPV)** describes how often a negative result is correct in the evaluated population.
+
+A high NPV can be reassuring, but it is strongly affected by prevalence. If almost nobody has the condition, a policy can have high NPV while detecting few of the people who do. A rule-out evaluation therefore needs sensitivity, missed-case counts, prevalence, follow-up, and the consequences of a false negative alongside NPV.
+
+For example, a low-risk classification could support avoiding an immediate test. The audit should ask whether missed cases are clinically serious, whether patients can return if symptoms change, and whether that safety pathway is equally accessible. The arithmetic alone does not answer those questions.
+
+## Rule-in: avoiding unnecessary action
+
+A rule-in policy aims to identify people for further investigation or action. **Specificity** measures how often people without the outcome are not flagged. **Positive predictive value (PPV)** describes how often flagged people have the outcome.
+
+False positives may cause anxiety, invasive testing, medication exposure, or time-consuming appointments. They can also use capacity that would otherwise serve other patients. The importance of these burdens depends on what follows a positive result.
+
+High specificity is not enough to establish a good rule-in tool in a low-prevalence population. Even a small false-positive rate can generate many false alarms when non-cases greatly outnumber cases.
+
+## A small example
+
+The following counts are **invented for teaching**. They describe the same sensitivity and specificity in two populations of 1,000 patients.
+
+| Population | Cases | True positives | False negatives | False positives | True negatives | PPV | NPV |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Prevalence 10% | 100 | 90 | 10 | 90 | 810 | 50.0% | 98.8% |
+| Prevalence 1% | 10 | 9 | 1 | 99 | 891 | 8.3% | 99.9% |
+
+Sensitivity and specificity are 90% in both rows. PPV is very different. The second population has only nine true cases among 108 positive results.
+
+This explains why transferring a predictive value between hospitals can be misleading. It also explains why unequal PPV does not, by itself, identify the source of a fairness problem. Case mix, prevalence, measurement, and policy all need examination.
+
+::: {.illustration-placeholder #ill-rule-in-out}
+**Illustration placeholder — Two doors after one score.**
+
+Show a low-threshold rule-out pathway and a higher-threshold rule-in pathway. Label missed cases, unnecessary investigations, and the intermediate region requiring ordinary clinical assessment. Use invented score distributions, clearly marked as schematic.
+:::
+
+## Capacity changes the question
+
+Suppose a service has 50 appointments each week. Lowering a threshold may improve sensitivity in validation data, but it may also create 200 referrals. The resulting policy includes a queue, a rationing rule, or a new capacity requirement. Ignoring that step leaves the clinical intervention undefined.
+
+Capacity can affect groups differently. A first-come-first-served process may disadvantage people with inflexible work or limited access to booking systems. An apparently equal offer rate may become unequal attendance or completion.
+
+Audit the sequence: eligible patients, offers, bookings, attendance, treatment, and outcomes. Each stage has a different denominator. Where possible, separate a patient's informed decision to decline from barriers that make accepting difficult.
+
+## Risk and benefit are different
+
+A model of untreated risk does not automatically identify who benefits most from treatment. Patients with the same risk can respond differently, and treatment may impose different burdens. Observational outcomes also reflect treatments patients have already received.
+
+The CFT papers use risk and recorded outcomes to illustrate auditing. They do not estimate the causal effect of offering an intervention. A threshold policy that improves detection therefore still needs an argument about the value of acting on those detections [@cftlong2026; @coston2020].
+
+## Common clinical uses and their audit questions
+
+| Use | Prediction | Important audit questions |
+|---|---|---|
+| Follow-up after discharge | Readmission probability | Are repeated encounters grouped? Does follow-up help? Who can access it? |
+| Diagnostic support | One of several recorded categories | Are labels comparable? Which class confusions cause the most harm? |
+| Service planning | Expected expenditure or length of stay | Is the target a measure of resource use, need, or both? What happens in the upper tail? |
+| Prognostic counselling | Event risk by a time horizon | Are risks calibrated at that horizon? Is censoring adequately handled? |
+| Review queue | A score plus a deferral rule | Who is deferred? How long do they wait? What are reviewer outcomes? |
+
+## Questions to discuss
+
+1. Why can a 99% NPV coexist with poor sensitivity?
+2. A service can accept only half the referrals produced by a new threshold. What additional policy must be specified?
+3. Why should “high predicted risk” and “high expected benefit from treatment” remain separate claims?

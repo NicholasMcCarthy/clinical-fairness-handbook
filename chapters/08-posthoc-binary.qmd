@@ -1,0 +1,148 @@
+# Post-hoc methods: binary decisions and scores {#sec-posthoc-binary}
+
+::: {.learning-objectives}
+You should be able to distinguish threshold changes, randomized decisions, score calibration, reject options, and deferral; and identify what each needs at fitting and deployment.
+:::
+
+## What “post-hoc” means
+
+A post-hoc method keeps the base predictor fixed and changes how its output is used. The new component may still need fitting, labelled data, group information, and tuning. “Model agnostic” does not mean assumption-free or data-free.
+
+The fitted system now includes the original predictor **and** the postprocessor. Fit the latter on separate development or calibration data, freeze its settings, and evaluate the whole procedure on held-out data. Preserve an unchanged baseline.
+
+Before choosing a method, ask whether the problem is the label, score meaning, operating threshold, or downstream pathway. A threshold cannot repair an unsuitable target. Calibration cannot create a service that patients can access.
+
+| Family | What changes | Main fitting inputs | Deployment requirement |
+|---|---|---|---|
+| Group thresholds | Binary decisions | Scores and groups; labels for outcome-based targets | Score and group |
+| Randomized parity policy | Probability of a decision | Scores or labels, groups, and outcomes | Specified policy inputs and randomization |
+| Recalibration | Risk probabilities | Scores and outcomes; groups if group-specific | Score; group if required |
+| Reject-option classification | Selected boundary decisions | Scores, outcomes, and group roles | Score and group |
+| Selective prediction | Who receives an automated decision | Scores or uncertainty signal; sometimes labels | Signal and a supported review pathway |
+
+## Group-specific thresholds
+
+For group $a$, a threshold $t_a$ gives
+
+$$
+D(s,a)=\mathbf{1}\{s\ge t_a\}.
+$$ {#eq-group-threshold}
+
+Changing $t_a$ moves the operating point. Lowering it normally increases both sensitivity and false-positive rate. A DP rule can target similar selection rates; an EOpp rule can target similar sensitivity.
+
+A general empirical search is
+
+$$
+\min_{\{t_a\}}\widehat L(D,Y)
+\quad\text{subject to}\quad
+\widehat\Delta(D)\le\epsilon,
+\qquad \widehat{\mathrm{TPR}}_a\ge c_a.
+$$ {#eq-threshold-objective}
+
+Here $\widehat L$ is a stated validation loss, $\epsilon$ an allowed disparity, and $c_a$ a sensitivity floor. This is a schematic optimisation problem, not a claim that every threshold helper solves it. Losses, grids, tie rules, and constraints differ between implementations [@hardt2016; @cftlong2026].
+
+CFT's native EOpp and sensitivity helpers are documented heuristics. Its specificity, PPV, and NPV helpers search supported validation thresholds under their stated target and objective. The long paper warns that different reference operating points can produce very different clinical behaviour. A method name alone does not define an equivalent comparison.
+
+An empirical floor is a fitted target. It can be infeasible, imprecise, or violated in another population. A PPV constraint needs enough positive decisions; an NPV constraint needs enough negative decisions. An all-negative policy cannot demonstrate PPV, and an all-positive policy cannot demonstrate NPV.
+
+**Clinical reading.** If sensitivity improves from 60% to 80% in one group, also report new false positives, workload, predictive values, and uncertainty. If the gap shrinks because another group's sensitivity falls, say so plainly.
+
+## Randomized equalized odds
+
+Sometimes deterministic thresholds cannot reach the same TPR and FPR in different groups. Randomization can mix operating rules. A simple two-threshold illustration is
+
+$$
+q_a(s)=\lambda_a\mathbf{1}\{s\ge t_{a,1}\}
++(1-\lambda_a)\mathbf{1}\{s\ge t_{a,2}\},
+\qquad D\sim\operatorname{Bernoulli}(q_a(s)).
+$$ {#eq-random-policy}
+
+The fitted $q_a$ is the probability of making a positive **decision**. It is not a disease probability. More general implementations can include constant or flipped rules. Hardt and colleagues develop the ROC-based post-processing construction [@hardt2016].
+
+Fairlearn and AIF360 provide related implementations with different interfaces and choices [@fairlearn2023; @aif3602018]. Inspect their objective and supported groups. CFT's strict external adapters retain incompatibility and missing-dependency states instead of claiming success through a substitute method.
+
+Expected policy rates and realised rates in a finite sample can differ because of randomization. Record seeds for reproducibility, but also evaluate whether the clinical action can reasonably be randomized. Identical input on repeated encounters should not accidentally trigger a changing care pathway without an explicit policy.
+
+::: {.illustration-placeholder #ill-threshold-mixture}
+**Illustration placeholder — A point between operating rules.**
+
+Show two group ROC curves, two thresholds on one curve, and the mixture point between them. Label the axes FPR and TPR. Explain that the line segment describes expected randomized decisions, not a new calibrated risk score.
+:::
+
+## Recalibration
+
+Recalibration aims to improve the meaning of a risk score. A logistic recalibration model can take the form
+
+$$
+\widetilde s=\operatorname{logit}^{-1}
+\{\beta_0+\beta_1\operatorname{logit}(s)\}.
+$$ {#eq-logistic-recalibration}
+
+The intercept adjusts overall over- or underprediction; the slope adjusts the spread. Exact zero and one scores require an explicitly documented treatment. Isotonic regression instead fits a nondecreasing relationship with fewer shape assumptions, but can be unstable with limited data.
+
+Recalibration uses held-out labels. Group-specific versions also need sufficient group support and group membership at use time. They can change cross-group ordering and the decisions produced by a fixed threshold [@vancalster2019].
+
+Ordinary recalibration is explained here as a general method. It should not be confused with CFT's calibrated equalized-odds adapter, which has a different objective and mechanism.
+
+## Calibrated equalized-odds post-processing
+
+Pleiss and colleagues study tensions between calibration and error-cost constraints. A conceptual adjustment mixes a source score with its group's prevalence:
+
+$$
+\widetilde S=(1-B_a)S+B_a\pi_a,
+\qquad B_a\sim\operatorname{Bernoulli}(\lambda_a),
+\quad \pi_a=P(Y=1\mid A=a).
+$$ {#eq-calibrated-eo}
+
+Some predictions become less informative by being replaced with a group-level constant. The calibration-preservation argument depends on appropriately calibrated source scores and the stated randomization. The method does not generally promise simultaneous unrestricted equalized odds, calibration, and unchanged informativeness [@pleiss2017].
+
+The CFT adapter requires explicit two-group roles and checks fitted mixture probabilities. A failed assumption or invalid fitted mixture should remain visible. A model called “logistic regression” is not evidence that its probabilities are sufficiently calibrated for the argument.
+
+## Multiaccuracy and multicalibration
+
+Multiaccuracy looks for systematic residual error across a specified family of subpopulations or auditor functions. For a bounded auditor $h$, a population target can be expressed as
+
+$$
+\left|E[h(X)\{Y-\widetilde S(X)\}]\right|\le\epsilon.
+$$
+
+Multicalibration adds conditions within score regions of supported subpopulations. A simplified cell-based target is
+
+$$
+\left|E[Y-\widetilde S\mid X\in G,\widetilde S\in B]\right|\le\epsilon
+$$
+
+for eligible groups $G$ and score bins $B$. Iterative corrections can address errors that broad averages hide. The actual guarantees depend on the auditor class, sampling, tolerances, and support [@kim2019; @hebertjohnson2018]. These equations explain research targets; they are not a guarantee that every hidden intersection is protected. CFT's restricted survival adaptation is discussed separately in @sec-posthoc-survival.
+
+## Reject options are not the same as deferral
+
+Reject-option classification may change decisions near a decision boundary in favour of one specified group and against another to address a chosen disparity. A schematic boundary region is $|s-t|\le m$, within which a group-dependent override is applied. The precise rule and optimisation must be stated [@kamiran2012].
+
+Despite the name, this need not send anyone to a human reviewer. It can directly issue a changed class decision. CFT's AIF360 wrapper follows a configured reject-option policy; it should not be described as a measured benefit from human review.
+
+## Selective prediction and deferral
+
+A selective predictor withholds its automated decision for some patients. Let $Q=1$ mean retained for automation and $Q=0$ mean deferred. A simple uncertainty signal is proximity to a threshold, $u(s)=-|s-t|$, where larger values indicate greater proximity. A cutoff $c$ gives
+
+$$
+Q=\mathbf{1}\{u(S)\le c\}.
+$$
+
+Fit $c$ on calibration data for a desired retained fraction and freeze it. Ties and population changes mean the achieved evaluation fraction can differ.
+
+For group $a$, report both
+
+$$
+\operatorname{Coverage}_a=P(Q=1\mid A=a),\qquad
+R_a^{\mathrm{ret}}=E[\ell(Y,D)\mid Q=1,A=a].
+$$ {#eq-coverage-risk}
+
+Retained accuracy often improves when difficult cases are removed. That does not establish better outcomes for deferred patients. A group could receive fewer automated decisions and face longer waits for review. Selective classification can also magnify group disparities [@jones2021].
+
+Learning to defer goes further by modelling interaction with a reviewer or expert. It needs evidence about that decision-maker and cannot be inferred from a simple coverage rule [@madras2018; @mozannar2020].
+
+## Questions to discuss
+
+1. Why can a decision postprocessor leave source-score AUROC unchanged?
+2. What additional meaning does a randomized policy introduce?
+3. If retained accuracy improves, what must be measured before claiming improved overall care?

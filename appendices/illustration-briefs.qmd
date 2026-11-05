@@ -1,0 +1,35 @@
+# Illustration briefs {#sec-illustrations}
+
+The book currently uses textual placeholders. These briefs specify original diagrams to commission or generate later. They do not require copying figures from the papers. Every eventual figure should have a visible caption, alternative text, a source or creation record, and a clear distinction between schematic and empirical content.
+
+| ID | Location | Teaching purpose and essential content |
+|---|---|---|
+| `ill-lifecycle` | Introduction | Separate access, recorded data, prediction, action, and outcomes; show feedback without claiming causal identification |
+| `ill-rule-in-out` | Clinical applications | Show different thresholds and consequences for rule-out and rule-in use; retain an intermediate assessment region |
+| `ill-data-split` | Audit design | Keep related encounters together; distinguish training, calibration, and evaluation |
+| `ill-task-map` | Modelling | Contrast scalar probability, class vector, numeric units, and survival curve |
+| `ill-calibration` | Utility | Distinguish pooled and group calibration with support information |
+| `ill-fairness-denominators` | Fairness | Highlight the population each criterion conditions on |
+| `ill-small-groups` | Uncertainty | Compare equal rates with different precision and an undefined rate |
+| `ill-threshold-mixture` | Binary methods | Explain a randomized ROC mixture and expected versus realised decisions |
+| `ill-multiclass` | Multiclass methods | Separate disease probabilities, policy probabilities, argmax, and sampling |
+| `ill-transport` | Regression methods | Follow a within-group percentile into a shared reference distribution |
+| `ill-conformal` | Regression methods | Explain calibration residuals, the order statistic, interval coverage, and width |
+| `ill-censoring` | Survival methods | Show why early censoring leaves horizon status unknown |
+| `ill-counterfactual` | Other methods | Separate an input edit from a causal model and its assumptions |
+| `ill-toolkit` | Toolkit | Show input routes and distinguish calculated results from supplied context |
+| `ill-monitoring` | Reporting | Connect versioned predictions to care, delayed outcomes, feedback, and review |
+
+## Priority concepts
+
+**Calibration.** Use directly labelled axes and an ideal diagonal. Show counts or a density strip so empty score regions are not presented as established evidence. If a pooled curve hides group errors, construct the example numerically rather than drawing an unsupported pattern.
+
+**Conformal prediction.** A sorted residual strip is often clearer than a decorative confidence band. Display the finite-sample order statistic and distinguish a future-outcome interval from a confidence interval for a mean. Equal coverage should coexist visibly with potentially unequal widths.
+
+**Counterfactuals.** Use a two-panel explanation. A simple edit holds other columns fixed. A causal intervention is defined within an explicit model of how variables arise. Do not illustrate identity as a biological switch or claim that the causal diagram has been established from the prediction data.
+
+## Visual language
+
+Use a restrained teal, blue, and warm-grey palette, with direct labels, patterns, or line styles so colour is never the only cue. Avoid red/green group coding, stereotyped patient portraits, and “good” versus “bad” demographic colours. Use large, readable text and consistent notation.
+
+Mathematical plots should be generated from checked numerical data with ordinary plotting tools. Generated artwork can support a human setting or conceptual scene, but should not be trusted to create precise axes, equations, or experimental results. Keep editable source assets with the figure record.

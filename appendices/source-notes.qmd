@@ -1,0 +1,35 @@
+# Source notes and scope {#sec-source-notes}
+
+## How the manuscripts informed the book
+
+The handbook develops arguments from the current CFT short announcement, long empirical paper, and background chapter. It is a teaching synthesis rather than a systematic review or a transcription of the papers.
+
+| Source | Contribution to this handbook |
+|---|---|
+| Short paper, `short-paper.tex` | Existing-model and prediction-table audits; four task types; descriptive and partial evidence; shared reporting workflow |
+| Long paper, `long-paper/methods.tex` | Method equations, fitting roles, native adaptation limits, task-specific evaluation |
+| Long paper, `long-paper/discussion.tex` | Small gaps with low detection; matched sampling comparators; distributional versus error objectives; censoring assumptions; limits of internal evidence |
+| Background chapter, `chapter/` | Clinical framing, measurement and proxy outcomes, broader fairness research, and audit design |
+| Toolkit source and documentation | Current input routes, capability names, execution states, and example command syntax |
+
+The publication source snapshot is commit `a5b5858fb34c2b4fd46320f9717cbf68d4efc242` in [the publication repository](https://github.com/NicholasMcCarthy/cft-publication). The toolkit snapshot inspected is commit `bfb2d5fe96641bf54c641a781d6779c055a673a4` in [the toolkit repository](https://github.com/NicholasMcCarthy/clinical-fairness-toolkit). Both were read for this edition on **5 November 2026**. File hashes are retained in the handbook repository's `sources/manifest.json`.
+
+The supplied project guidance preserves baseline-first clinical boundaries and a separate retained binary research engine. The inspected toolkit additionally contains explicit native intervention contracts and opt-in comparison configurations. The handbook describes those documented adaptations without extending them or implying that every saved example is baseline-only. A future software update needs a fresh capability check.
+
+## Empirical findings and teaching examples
+
+The book uses qualitative lessons from the current long paper without reproducing benchmark tables. Its worked numbers are invented and labelled. Earlier broad binary benchmarks and historical publication matrices are not presented as current task-suite results.
+
+The papers are working manuscripts. Their experiments are internal, exploratory evidence and do not establish patient-care benefit. Method papers establish particular mathematical results under their assumptions; the handbook does not automatically transfer those results to a restricted implementation.
+
+## References and checks
+
+Bibliographic entries were drawn from the publication repository's `clinical-references.bib`, restricted to works actually cited, with separate entries for the two working manuscripts. Core source locations were checked against primary publisher, proceedings, author, or official documentation pages during preparation. This is not an exhaustive new literature search or independent replication of each paper.
+
+Examples of primary sources checked include [Hardt and colleagues](https://proceedings.neurips.cc/paper_files/paper/2016/hash/6a9659feb1216f14f7384ba499518b38-Abstract.html), [Romano and colleagues](https://hdsr.mitpress.mit.edu/pub/qedrwcz3/release/1), [Agarwal and colleagues](https://proceedings.mlr.press/v80/agarwal18a.html), [Xian and colleagues](https://proceedings.mlr.press/v202/xian23b.html), [Qi and colleagues](https://proceedings.mlr.press/v235/qi24a.html), [TRIPOD+AI](https://www.bmj.com/content/385/bmj-2023-078378), and [FUTURE-AI](https://www.bmj.com/content/388/bmj-2024-081554).
+
+## Editorial boundaries
+
+This edition includes illustration briefs rather than finished illustrations. It contains no borrowed figure assets, patient-level data, new model runs, clinical approvals, or invented governance attestations. The audit worksheet intentionally leaves project-specific facts blank.
+
+Before a public textbook release, the author should review clinical wording, source interpretations, and the scope of each implementation claim; replace the illustration placeholders; and decide authorship, licensing, and publication details. These are editorial tasks, not claims that the current draft has been externally reviewed.

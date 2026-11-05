@@ -1,0 +1,75 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: Clinical Fairness Handbook
+  subtitle: A practical companion for evaluating prediction models in healthcare
+  date: 2026-11-05
+  date-format: D MMMM YYYY
+  search: true
+  reader-mode: true
+  downloads: [epub]
+  sidebar:
+    style: docked
+    collapse-level: 1
+  page-footer:
+    left: Clinical Fairness Handbook · Working textbook
+    right: Evidence, assumptions, and clinical decisions
+  chapters:
+    - index.qmd
+    - part: Foundations
+      chapters:
+        - chapters/01-introduction.qmd
+        - chapters/02-clinical-applications.qmd
+        - chapters/03-data-and-audit-design.qmd
+        - chapters/04-modelling-approaches.qmd
+    - part: Evaluating a model
+      chapters:
+        - chapters/05-utility.qmd
+        - chapters/06-fairness.qmd
+        - chapters/07-uncertainty.qmd
+    - part: Changing a prediction system
+      chapters:
+        - chapters/08-posthoc-binary.qmd
+        - chapters/09-posthoc-multiclass.qmd
+        - chapters/10-posthoc-regression.qmd
+        - chapters/11-posthoc-survival.qmd
+        - chapters/12-other-methods.qmd
+    - part: Putting the evidence to work
+      chapters:
+        - chapters/13-worked-cases.qmd
+        - chapters/14-toolkit.qmd
+        - chapters/15-reporting-and-monitoring.qmd
+    - references.qmd
+  appendices:
+    - appendices/glossary.qmd
+    - appendices/audit-worksheet.qmd
+    - appendices/exercise-answers.qmd
+    - appendices/illustration-briefs.qmd
+    - appendices/source-notes.qmd
+
+bibliography: references.bib
+link-citations: true
+lang: en-GB
+toc: true
+toc-depth: 2
+number-sections: true
+crossref:
+  chapters: true
+execute:
+  enabled: false
+
+format:
+  html:
+    theme:
+      light: [cosmo, styles/handbook.scss]
+      dark: [darkly, styles/handbook.scss]
+    fontsize: 1.05em
+    linestretch: 1.65
+    code-copy: true
+    link-external-newwindow: true
+    html-math-method: mathjax
+  epub:
+    toc-depth: 2
+    css: styles/epub.css

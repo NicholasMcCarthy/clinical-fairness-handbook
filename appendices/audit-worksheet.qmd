@@ -1,0 +1,77 @@
+# A practical audit worksheet {#sec-worksheet}
+
+Use this worksheet before the main analysis, then update it with findings and unresolved questions. A blank field means the evidence or decision is still missing. It is not an invitation to invent an attestation.
+
+## The clinical question
+
+| Prompt | Complete for this audit |
+|---|---|
+| What decision or information use is proposed? | … |
+| Who will act on the prediction, and when? | … |
+| Who is eligible, and who is outside scope? | … |
+| What benefit is expected, and on what evidence? | … |
+| What can false positives, false negatives, or delays cause? | … |
+| What capacity and access constraints apply? | … |
+| Who contributed patient, clinical, and service perspectives? | … |
+
+## Data and target
+
+| Prompt | Complete for this audit |
+|---|---|
+| Dataset source, setting, dates, and selection process | … |
+| Outcome definition, units, horizon, and ascertainment | … |
+| Relationship between the recorded target and clinical need | … |
+| Prediction time and allowed measurement window | … |
+| Audit attributes, provenance, categories, and missingness | … |
+| Independent unit: patient, encounter, household, or other | … |
+| Training, calibration, evaluation, and reference roles | … |
+| Known overlap checks and limits of those checks | … |
+| Exclusions and changes to the population described | … |
+| Survey design or censoring assumptions, if relevant | … |
+
+## Model and policy
+
+| Prompt | Complete for this audit |
+|---|---|
+| Model version and preprocessing pipeline | … |
+| Positive class or class order; score direction | … |
+| Baseline decision rule and how it was selected | … |
+| What each intervention changes | … |
+| Fitting inputs, parameters, constraints, and randomization | … |
+| Inputs needed at deployment, including group information | … |
+| Clinical floors or capacity limits and their rationale | … |
+| Handling of unseen groups, missing inputs, and infeasibility | … |
+| Deferral pathway and who is responsible for review | … |
+
+## Evidence and uncertainty
+
+| Prompt | Complete for this audit |
+|---|---|
+| Primary utility metrics, units, and comparators | … |
+| Primary fairness questions and exact formulas | … |
+| Group counts and each metric's denominator | … |
+| Prespecified intersections and exploratory comparisons | … |
+| Uncertainty method, sampling unit, and what it conditions on | … |
+| Undefined metrics and why they are undefined | … |
+| Expected versus realised stochastic-policy results | … |
+| Retained-set versus full-population evidence | … |
+| Interventions not executed, with states and reasons | … |
+| Whether evaluation results were used for further selection | … |
+
+## Interpretation and next decision
+
+Write one paragraph giving the strongest claim the evidence supports. Write a second naming what it does not establish and the most important unresolved assumption.
+
+Record the proposed next step, responsible person or team, evidence needed, and review date. If use is proposed, add the prospective evaluation and monitoring plan. Keep this decision record distinct from the automatically calculated report.
+
+## Monitoring handover
+
+| Prompt | Complete for this audit |
+|---|---|
+| Model and policy version entering the service | … |
+| Input, outcome, decision, and access measures to monitor | … |
+| Outcome maturity and follow-up rules | … |
+| Review cadence and accountable owner | … |
+| Signals that trigger investigation or pause | … |
+| Patient and staff feedback route | … |
+| Procedure for approving and evaluating an update | … |

@@ -1,0 +1,6 @@
+# References {.unnumbered}
+
+The cited CFT papers are local working manuscripts, not claims of peer-reviewed publication or clinical validation. Their exact source snapshots and the handbook's use of them are documented in @sec-source-notes. Primary-method references identify the original constructions; native adaptations are labelled in the relevant chapters.
+
+::: {#refs}
+:::

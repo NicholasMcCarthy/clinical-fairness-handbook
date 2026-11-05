@@ -1,0 +1,43 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Segoe UI", system-ui, -apple-system, sans-serif;
+$font-family-monospace: Consolas, "Liberation Mono", monospace;
+$headings-font-weight: 650;
+$primary: #207a86;
+$link-color: #176a91;
+
+/*-- scss:rules --*/
+main { max-width: 900px; }
+h1, h2, h3 { line-height: 1.22; }
+h2 { margin-top: 2.4rem; }
+.quarto-title .subtitle { max-width: 42rem; }
+.illustration-placeholder {
+  border: 2px dashed #718b96;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  margin: 1.8rem 0;
+  background: rgba(94, 150, 165, 0.08);
+  break-inside: avoid;
+}
+.illustration-placeholder p:first-child { font-weight: 650; }
+.illustration-placeholder p:last-child { margin-bottom: 0; }
+.learning-objectives {
+  border-left: 4px solid #207a86;
+  padding: .5rem 1rem;
+  margin: 1.4rem 0;
+}
+table { font-size: .92em; }
+main .table { display: block; width: 100%; overflow-x: auto; }
+mjx-container[display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: .4rem 0;
+}
+td, th { vertical-align: top; }
+.callout { break-inside: avoid; }
+body.quarto-dark a { color: #91d4df; }
+@media print {
+  .sidebar, #quarto-margin-sidebar, .quarto-secondary-nav { display: none; }
+  main { max-width: none; }
+  .illustration-placeholder { border-color: #555; }
+}

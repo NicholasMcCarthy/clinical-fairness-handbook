@@ -1,0 +1,8 @@
+/_book/
+/.quarto/
+/.tools/
+/artifacts/
+__pycache__/
+*.pyc
+
+**/*.quarto_ipynb

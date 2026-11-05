@@ -1,0 +1,93 @@
+# Utility: is the prediction useful? {#sec-utility}
+
+::: {.learning-objectives}
+You should be able to read a confusion matrix, distinguish ranking from calibration, and connect task-specific performance to a clinical action.
+:::
+
+## Start with counts and consequences
+
+Clinical utility concerns the value and burden of using a prediction. Performance metrics describe parts of that question. They are easiest to interpret when the underlying counts and proposed action remain visible [@steyerberg2010].
+
+For a binary task, true positives (TP) are detected cases, false negatives (FN) are missed cases, false positives (FP) are flagged non-cases, and true negatives (TN) are unflagged non-cases.
+
+| Metric | Formula | Plain-language question |
+|---|---|---|
+| Sensitivity / true-positive rate | $TP/(TP+FN)$ | How many actual cases are detected? |
+| Specificity / true-negative rate | $TN/(TN+FP)$ | How many non-cases are left unflagged? |
+| False-positive rate | $FP/(FP+TN)$ | How many non-cases are flagged? |
+| PPV / precision | $TP/(TP+FP)$ | How many flagged people are actual cases? |
+| NPV | $TN/(TN+FN)$ | How many unflagged people are actual non-cases? |
+| Selection rate | $(TP+FP)/n$ | How many people receive a positive decision? |
+| Balanced accuracy | $(\mathrm{TPR}+\mathrm{TNR})/2$ | How well are the two outcome classes detected on average? |
+
+A zero denominator means the rate is undefined. If no patients are flagged, PPV is not zero; it cannot be estimated from that group. If there are no observed cases, sensitivity is undefined. Keep that distinction visible.
+
+Accuracy weights errors according to their frequency in the dataset. Balanced accuracy gives the two true outcome classes equal weight. Neither automatically reflects clinical consequences. F1 combines precision and recall but leaves true negatives out of its formula; it is not a universal clinical utility measure.
+
+## Discrimination: ordering patients
+
+AUROC summarises how well scores rank cases above non-cases, with an appropriate convention for ties. It does not specify a threshold or quantify the usefulness of acting on a prediction.
+
+Precision-recall summaries focus on detection among positive predictions and can be informative for uncommon outcomes. Average precision depends on prevalence, so comparisons across populations need care. A good ranking can coexist with inaccurate absolute risks.
+
+For a decision-only postprocessor, source-score AUROC may be unchanged even when the decisions change. That is expected: it measures a different object.
+
+## Calibration: the meaning of a probability
+
+A calibrated risk of 20% means that, among comparable predictions near 20%, the observed event frequency is about 20% in the stated population and time frame. Formally, ideal group calibration is
+
+$$
+E[Y\mid S=s,A=a]=s.
+$$
+
+In practice, exact score values may have few observations. Calibration plots use smoothing or bins, with enough data to support interpretation. Report group support and uncertainty; a smooth line can conceal sparse regions.
+
+Calibration-in-the-large examines average over- or underprediction. A calibration slope can reveal predictions that are too extreme or insufficiently spread out. A full calibration curve can reveal local errors that these summaries miss [@vancalster2019].
+
+The Brier score is
+
+$$
+\operatorname{BS}=\frac1n\sum_i(S_i-Y_i)^2.
+$$
+
+It is a probability-error score, influenced by more than calibration alone. Log loss also evaluates probabilities and strongly penalises confident mistakes. Calling either a pure “calibration metric” obscures that distinction.
+
+::: {.illustration-placeholder #ill-calibration}
+**Illustration placeholder — A risk label that means what it says.**
+
+Show three reliability curves: close to the diagonal, systematic overprediction, and different group curves hidden by an acceptable pooled curve. Include a rug or count strip below the plots. Use schematic data and explicitly label the diagonal as ideal calibration.
+:::
+
+## From prediction to net benefit
+
+Decision-curve analysis links a binary decision to a threshold probability $p_t$, under a specified relative value of false positives and true positives. A common net-benefit expression is
+
+$$
+\operatorname{NB}(p_t)=\frac{TP}{n}-\frac{FP}{n}\frac{p_t}{1-p_t}.
+$$
+
+The weighting expresses how much harm from an unnecessary action is accepted relative to benefit from an appropriate one. Compare the model policy with relevant alternatives, often acting on everyone or no one [@vickers2006].
+
+This is a decision model, not observed treatment benefit. Its interpretation needs a suitable endpoint, a credible action, and meaningful threshold preferences. A subgroup net-benefit curve may be useful, but it does not make waiting time, access, or all patient burdens disappear. Decision curves are covered here as an evaluation concept; this book does not claim that CFT automatically supplies them.
+
+## Utility across the other tasks
+
+For **multiclass** prediction, report the confusion matrix and each class's detection and predictive value. Macro averages give classes equal weight; weighted averages can be dominated by common classes. Multiclass log loss and Brier scores use the full probability vector. If some mistakes are more serious, define a cost matrix $L_{yk}$ for predicting class $k$ when the true class is $y$.
+
+For **regression**, define residuals here as $e_i=\widehat Y_i-Y_i$, so positive bias means overprediction. Then
+
+$$
+\operatorname{MAE}=\frac1n\sum_i|e_i|,\quad
+\operatorname{RMSE}=\sqrt{\frac1n\sum_i e_i^2},\quad
+\operatorname{Bias}=\frac1n\sum_i e_i.
+$$
+
+Signed errors can cancel. RMSE emphasises large errors more strongly than MAE. Report units, group-specific errors, and clinically important tails. $R^2$ can be negative on evaluation data and is undefined when the evaluated outcome has zero variation. It is not a direct measure of whether errors are acceptable.
+
+For **survival**, concordance assesses ranking among appropriately comparable observations. Horizon AUC, Brier scores, and calibration answer time-specific questions and require censoring-aware estimators. A model can rank patients reasonably while assigning poor six-month probabilities. The censoring assumptions and supported horizons belong beside the numbers; @sec-posthoc-survival gives a worked loss formula.
+
+## Questions to discuss
+
+1. If everyone receives the same well-calibrated risk, what useful information might still be missing?
+2. Two regression groups have zero mean signed error. Does that establish equal predictive performance?
+3. Why should a high AUROC not be used as evidence that a referral threshold is clinically worthwhile?

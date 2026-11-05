@@ -1,0 +1,91 @@
+# Other fairness methods and research directions {#sec-other-methods}
+
+::: {.learning-objectives}
+You should be able to place interventions at the appropriate stage, explain fairness-aware learning objectives, and distinguish causal counterfactual claims from input sensitivity checks.
+:::
+
+## The problem may start before prediction
+
+Post-processing is useful when a model is already fitted, but it cannot address every source of harm. A target that measures access rather than need may require a new endpoint. A population absent from development data may require recruitment. A device that measures differently across patients may require measurement work.
+
+This chapter is a research overview beyond the handbook's CFT post-hoc workflows. It does not claim that CFT implements fairness-aware training or causal identification. The examples remain compatible with classical statistical and ML models; deep learning is not required.
+
+## Data collection and preprocessing
+
+Improving representation can mean collecting data from missing settings, languages, or patient groups. It can also mean improving outcome follow-up or measurement consistency. More rows from the same narrow population may not solve the original coverage problem.
+
+Reweighting changes each observation's contribution to a fitting objective:
+
+$$
+\widehat R_w(f)=\frac{\sum_i w_i\ell\{Y_i,f(X_i)\}}{\sum_iw_i}.
+$$
+
+The meaning depends on the weights. Survey weights represent a sampling design. Transport weights aim to represent another population. Fairness-motivated weights change the optimisation emphasis. These uses should not be interchanged without justification.
+
+Resampling can change class or group balance, but duplicating rare records does not create independent information. Synthetic examples can also reproduce unwanted correlations or create implausible combinations. Evaluate representation and measurement quality alongside predictive results [@suresh2021].
+
+## Penalties and constraints during learning
+
+A fairness penalty combines predictive loss and a disparity term:
+
+$$
+\widehat f=\arg\min_f\{\widehat R(f)+\lambda\widehat\Phi(f)\}.
+$$
+
+The parameter $\lambda$ controls an optimisation trade-off, not a clinical preference by itself. The disparity $\Phi$ needs a definition, supported denominators, and a link to the intended action.
+
+A constrained version is
+
+$$
+\min_f\widehat R(f)\quad\text{subject to}\quad
+\widehat\Phi_j(f)\le\epsilon_j.
+$$
+
+These approaches require training access and development-only selection. Constraints measured during training do not automatically hold in another population. Clinical empirical work shows why calibration, ranking, and utility should still be evaluated after targeting parity [@pfohl2021].
+
+## Reductions and robust objectives
+
+Reductions solve a fairness-constrained problem through a sequence of cost-sensitive learning problems. They can reuse a compatible base learner and produce a mixture of classifiers. This is a training procedure, unlike choosing a threshold for one frozen predictor [@agarwal2018; @agarwal2019].
+
+Distributionally robust optimisation can target the worst expected loss over a specified set of plausible distributions:
+
+$$
+\min_f\sup_{P\in\mathcal U}E_P[\ell\{Y,f(X)\}].
+$$
+
+The uncertainty set $\mathcal U$ determines what “worst” means. It might emphasise certain groups or distributions near the observed data. A group absent from the data does not gain reliable protection simply because the objective is called robust. Survival losses add risk-set and dependence issues that need survival-specific treatment [@hu2024].
+
+## Causal and counterfactual fairness
+
+An input sensitivity check asks what the fitted model returns when a column is changed while other inputs remain fixed. This can expose direct model dependence. It does not establish what would happen to a person in another causal world.
+
+Kusner and colleagues define counterfactual fairness through a structural causal model. A simplified statement is
+
+$$
+P(\widehat Y_{A\leftarrow a}(U)=y\mid X=x,A=a)
+=P(\widehat Y_{A\leftarrow a'}(U)=y\mid X=x,A=a)
+$$
+
+for alternative values $a'$ and relevant outcomes $y$. Here $U$ denotes background factors in the causal model, and the subscript denotes an intervention within that model [@kusner2017].
+
+The difficult work is specifying credible pathways, deciding which pathways are relevant to fairness, and establishing what the data can identify. Race and gender are socially and historically situated; a formal intervention on a variable is not automatically a coherent real-world intervention on a person's identity.
+
+For example, holding access-dependent laboratory measurements fixed while changing a demographic field does not represent all the pathways through which unequal access shaped the record. Conversely, allowing every downstream variable to change requires causal assumptions that an ordinary prediction table cannot supply.
+
+::: {.illustration-placeholder #ill-counterfactual}
+**Illustration placeholder — A column edit and a causal question.**
+
+Use two panels. The first shows an input field edited while other columns stay fixed. The second shows a proposed causal diagram in which structural conditions affect access, measurements, and outcomes. Mark assumptions as assumptions and avoid presenting demographic categories as simple biological causes.
+:::
+
+## Fairness may require a service change
+
+A review pathway can be improved by adding interpreter access, reducing waiting time, or making follow-up reachable. Better outcome ascertainment can expose a disparity that was previously hidden. Changing the model may be only one part of a response.
+
+These changes also need evaluation. Increased referrals are useful only if the service can deliver the intended benefit without shifting unacceptable burdens onto patients or staff. Patient participation helps identify what counts as a meaningful improvement.
+
+## Questions to discuss
+
+1. Why are survey weights and fairness-optimisation weights different?
+2. What does a fairness penalty weight fail to tell you about clinical acceptability?
+3. What additional assumptions are needed to move from an input edit to a causal counterfactual claim?
